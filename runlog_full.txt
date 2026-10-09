@@ -1,0 +1,624 @@
+verify_all.py: full tier
+
+--- V1: ensembles, decoding and instruments (Section 2) ---
+V1 LMFDB size                                              |                 772719 |                 772719 |          0 | PASS
+V1 complete blocks decoded                                 |                    110 |                    110 |          0 | PASS
+V1 block index continuity                                  |                   True |                   True |          0 | PASS
+V1 block t continuity                                      |                   True |                   True |          0 | PASS
+V1 80-bit ordinates strictly increasing                    |                   True |                   True |          0 | PASS
+V1 hi column equals the double array                       |                   True |                   True |          0 | PASS
+V1 max |lo| <= half an ulp (4.8e-7)                        |              4.768e-07 |              4.800e-07 |         <= | PASS
+V1 max |exact - (hi+lo)| on 772719 ordinates (3e-23)       |              2.647e-23 |              3.000e-23 |         <= | PASS
+    (exact check: 6.0s)
+V1 fresh decode: cumulative integers identical             |                   True |                   True |          0 | PASS
+    (fresh decode with checks (i)-(iv): 3.1s)
+V1 LMFDB first ordinate                                    |          8436146000.02 |          8436146000.02 |       0.01 | PASS
+V1 LMFDB last ordinate                                     |          8436376999.73 |          8436376999.73 |       0.01 | PASS
+V1 2M size                                                 |                2001052 |                2001052 |          0 | PASS
+V1 100k size                                               |                 100000 |                 100000 |          0 | PASS
+V1 dens at 8.4e9                                           |                3.34511 |                 3.3451 |     0.0005 | PASS
+V1 tight pairs 8.4e9                                       |                   2736 |                   2736 |          0 | PASS
+V1 tight pairs 2M                                          |                   6088 |                   6088 |          0 | PASS
+V1 tight pairs 100k                                        |                    261 |                    261 |          0 | PASS
+V1 pair index arrays consistent                            |                   True |                   True |          0 | PASS
+V1 |Z_dd - mpmath| on 20 mid-gaps (<= 8.5e-14)             |              8.404e-14 |              8.500e-14 |         <= | PASS
+V1 |Z_rs2 - mpmath| on 20 mid-gaps (<= 3.6e-8)             |              3.203e-08 |              3.600e-08 |         <= | PASS
+V1 Z_rs2 with double-precision 2pi: max error on 20 mid-gaps (<= 4e-6, > 1e-7) |               3.93e-06 |                3.9e-06 | [1e-7,4e-6] | PASS
+V1 |Z_dd - mpmath| at t=1.2e6 (<= 1e-14)                   |              2.151e-15 |              1.000e-14 |         <= | PASS
+V1 Z_dd at t=7005.08 with C_0..C_3 (<= 1e-10)              |              5.793e-11 |              1.000e-10 |         <= | PASS
+V1 smallest floor 8.4e9 (table)                            |             1.3711e-04 |              1.371e-04 |      1e-12 | PASS
+V1 smallest floor 2M (table)                               |             1.2969e-04 |              1.297e-04 |      1e-12 | PASS
+V1 smallest floor 8.4e9                                    |             1.3711e-04 |                   info |          - | PASS
+V1 shipped floor recomputed, pair 180923                   |             1.4112e-02 |              1.411e-02 |      1e-12 | PASS
+V1 shipped floor recomputed, pair 659470                   |             1.2947e-02 |              1.295e-02 |      1e-12 | PASS
+V1 shipped floor recomputed, pair 407169                   |             8.8051e-03 |              8.805e-03 |      1e-12 | PASS
+    [V1 done in 23.0s]
+
+--- V2: the identity, Table 3.1; self-calibration, Observation 3.11 ---
+V2 identity max dev (double) 100k <= 1e-15                 |              4.441e-16 |              1.000e-15 |         <= | PASS
+V2 identity max dev 100k equals Table 3.1                  |             4.4409e-16 |              4.441e-16 |      1e-06 | PASS
+V2 identity max dev (double) 2M <= 1e-15                   |              6.661e-16 |              1.000e-15 |         <= | PASS
+V2 identity max dev 2M equals Table 3.1                    |             6.6613e-16 |              6.661e-16 |      1e-06 | PASS
+V2 identity max dev (double) 8p4e9 <= 1e-15                |              5.551e-16 |              1.000e-15 |         <= | PASS
+V2 identity max dev 8p4e9 equals Table 3.1                 |             5.5511e-16 |              5.551e-16 |      1e-06 | PASS
+V2 identity max dev (double) 1e12 <= 1e-15                 |              4.441e-16 |              1.000e-15 |         <= | PASS
+V2 identity max dev 1e12 equals Table 3.1                  |             4.4409e-16 |              4.441e-16 |      1e-06 | PASS
+V2 identity max dev (double) 1e21 <= 1e-15                 |              3.331e-16 |              1.000e-15 |         <= | PASS
+V2 identity max dev 1e21 equals Table 3.1                  |             3.3307e-16 |              3.331e-16 |      1e-06 | PASS
+V2 identity max dev (80-bit) <= 1e-18                      |              2.168e-19 |              1.000e-18 |         <= | PASS
+V2 identity 80-bit dev equals Table 3.1                    |             2.1684e-19 |              2.168e-19 |      1e-06 | PASS
+V2 lehmer_rows_8p4e9 recomputed on 2736 pairs, max rel dev |              0.000e+00 |              1.000e-12 |         <= | PASS
+V2 min r (0.9612)                                          |               0.961224 |                 0.9612 |     0.0005 | PASS
+V2 median r (0.9981)                                       |               0.998054 |                 0.9981 |     0.0005 | PASS
+V2 max r (0.99998)                                         |               0.999975 |                0.99998 |      1e-05 | PASS
+V2 min C_mid (1.52)                                        |                  1.519 |                   1.52 |       0.01 | PASS
+V2 median C_mid (32.0)                                     |                  32.02 |                   32.0 |        0.1 | PASS
+V2 max C_mid (2520)                                        |                 2519.6 |                   2520 |          1 | PASS
+V2 median sqrt(kappa) (0.050)                              |                 0.0503 |                  0.050 |      0.002 | PASS
+V2 max sqrt(kappa) (0.399)                                 |                 0.3987 |                  0.399 |      0.002 | PASS
+V2 mean (1-r)/s^2 (0.156)                                  |                 0.1557 |                  0.156 |      0.001 | PASS
+V2 mean(far/dens^2)/16 (0.156)                             |                 0.1563 |                  0.156 |      0.001 | PASS
+V2 pi^2/60                                                 |                 0.1645 |                 0.1645 |     0.0001 | PASS
+V2 flip-depth equation residual                            |              2.880e-13 |              1.000e-11 |         <= | PASS
+V2 median h_flip/eps (1.0039)                              |                1.00393 |                 1.0039 |     0.0002 | PASS
+V2 max |h_flip/eps - 1 - 1/(8 C_mid)| / C_mid^-2           |              2.925e-02 |              1.000e-01 |         <= | PASS
+V2 max |h_thr/eps - 1 + 1/(16 C_mid)| / C_mid^-2           |              5.859e-03 |              1.000e-01 |         <= | PASS
+V2 Lehmer pairs (C > 5/4) have r > sqrt(20/21)             |                   True |                   True |          0 | PASS
+V2 tight pairs with C > 5/4 (2735 of 2736)                 |                   2735 |                   2735 |          0 | PASS
+V2 the exception is the pair with the smallest C_mid       |                   2320 |                   2320 |          0 | PASS
+V2 sqrt(20/21)                                             |                0.97590 |                 0.9759 |     0.0001 | PASS
+    [V2 done in 0.2s]
+
+--- V3: floor law and curvature (Theorem A(b),(c), Table 3.2); endpoint identity ---
+V3 max |R_250| (3.0e-6)                                    |              6.564e-07 |              3.000e-06 |         <= | PASS
+V3 min |R_250| >= 1.9e-7                                   |             -1.922e-07 |             -1.900e-07 |         <= | PASS
+V3 R_250 explained by the omitted tail (5e-11)             |              3.888e-12 |              5.000e-11 |         <= | PASS
+V3 max |R_all| (7.3e-13)                                   |              7.218e-13 |              7.300e-13 |         <= | PASS
+V3 max |curvature deviation| (2.9e-13)                     |              2.899e-13 |              2.900e-13 |         <= | PASS
+V3 Table 3.2 rows equal reference file                     |                   True |                   True |          0 | PASS
+V3 max |R_all| 100k (2.3e-07)                              |              2.289e-07 |              2.300e-07 |         <= | PASS
+V3 max |curvature deviation| 100k (2.3e-07)                |              2.292e-07 |              2.300e-07 |         <= | PASS
+V3 max |R_all| 2M (4.1e-07)                                |              4.026e-07 |              4.100e-07 |         <= | PASS
+V3 max |curvature deviation| 2M (4.1e-07)                  |              4.000e-07 |              4.100e-07 |         <= | PASS
+V3 max |R_all| lehmer (7.1e-08)                            |              7.005e-08 |              7.100e-08 |         <= | PASS
+V3 max |curvature deviation| lehmer (7.1e-08)              |              6.835e-08 |              7.100e-08 |         <= | PASS
+V3 pair 01 |R_all| recomputed (<= 1e-12)                   |              9.016e-15 |              1.000e-12 |         <= | PASS
+V3 pair 01 floor F equals reference                        |             2.4960e-04 |              2.496e-04 |      1e-12 | PASS
+V3 pair 01 |Z''(t*)| equals reference                      |             1.1577e+02 |              1.158e+02 |      1e-10 | PASS
+V3 pair 01 shipped floor vs 30-digit floor (<= 1e-5)       |             2.4960e-04 |              2.496e-04 |      1e-05 | PASS
+V3 pair 01 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              3.973e-15 |              1.000e-13 |         <= | PASS
+V3 pair 02 |R_all| recomputed (<= 1e-12)                   |              2.738e-14 |              1.000e-12 |         <= | PASS
+V3 pair 02 floor F equals reference                        |             5.9310e-04 |              5.931e-04 |      1e-12 | PASS
+V3 pair 02 |Z''(t*)| equals reference                      |             2.1888e+02 |              2.189e+02 |      1e-10 | PASS
+V3 pair 02 shipped floor vs 30-digit floor (<= 1e-5)       |             5.9310e-04 |              5.931e-04 |      1e-05 | PASS
+V3 pair 02 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              1.056e-15 |              1.000e-13 |         <= | PASS
+V3 pair 03 |R_all| recomputed (<= 1e-12)                   |              1.768e-14 |              1.000e-12 |         <= | PASS
+V3 pair 03 floor F equals reference                        |             5.3801e-04 |              5.380e-04 |      1e-12 | PASS
+V3 pair 03 |Z''(t*)| equals reference                      |             1.6333e+02 |              1.633e+02 |      1e-10 | PASS
+V3 pair 03 shipped floor vs 30-digit floor (<= 1e-5)       |             5.3801e-04 |              5.380e-04 |      1e-05 | PASS
+V3 pair 03 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              9.020e-14 |              1.000e-13 |         <= | PASS
+V3 pair 04 |R_all| recomputed (<= 1e-12)                   |              3.832e-14 |              1.000e-12 |         <= | PASS
+V3 pair 04 floor F equals reference                        |             4.7698e-04 |              4.770e-04 |      1e-12 | PASS
+V3 pair 04 |Z''(t*)| equals reference                      |             1.3873e+02 |              1.387e+02 |      1e-10 | PASS
+V3 pair 04 shipped floor vs 30-digit floor (<= 1e-5)       |             4.7698e-04 |              4.770e-04 |      1e-05 | PASS
+V3 pair 04 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              7.183e-15 |              1.000e-13 |         <= | PASS
+V3 pair 05 |R_all| recomputed (<= 1e-12)                   |              2.167e-14 |              1.000e-12 |         <= | PASS
+V3 pair 05 floor F equals reference                        |             6.7125e-04 |              6.712e-04 |      1e-12 | PASS
+V3 pair 05 |Z''(t*)| equals reference                      |             1.6000e+02 |              1.600e+02 |      1e-10 | PASS
+V3 pair 05 shipped floor vs 30-digit floor (<= 1e-5)       |             6.7125e-04 |              6.712e-04 |      1e-05 | PASS
+V3 pair 05 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              1.694e-15 |              1.000e-13 |         <= | PASS
+V3 pair 06 |R_all| recomputed (<= 1e-12)                   |              3.273e-14 |              1.000e-12 |         <= | PASS
+V3 pair 06 floor F equals reference                        |             6.6555e-04 |              6.656e-04 |      1e-12 | PASS
+V3 pair 06 |Z''(t*)| equals reference                      |             1.5014e+02 |              1.501e+02 |      1e-10 | PASS
+V3 pair 06 shipped floor vs 30-digit floor (<= 1e-5)       |             6.6555e-04 |              6.656e-04 |      1e-05 | PASS
+V3 pair 06 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              6.731e-15 |              1.000e-13 |         <= | PASS
+V3 pair 07 |R_all| recomputed (<= 1e-12)                   |              7.218e-13 |              1.000e-12 |         <= | PASS
+V3 pair 07 floor F equals reference                        |             1.3711e-04 |              1.371e-04 |      1e-12 | PASS
+V3 pair 07 |Z''(t*)| equals reference                      |             3.0822e+01 |              3.082e+01 |      1e-10 | PASS
+V3 pair 07 shipped floor vs 30-digit floor (<= 1e-5)       |             1.3711e-04 |              1.371e-04 |      1e-05 | PASS
+V3 pair 07 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              7.655e-15 |              1.000e-13 |         <= | PASS
+V3 pair 08 |R_all| recomputed (<= 1e-12)                   |              9.910e-15 |              1.000e-12 |         <= | PASS
+V3 pair 08 floor F equals reference                        |             8.7912e-04 |              8.791e-04 |      1e-12 | PASS
+V3 pair 08 |Z''(t*)| equals reference                      |             1.8781e+02 |              1.878e+02 |      1e-10 | PASS
+V3 pair 08 shipped floor vs 30-digit floor (<= 1e-5)       |             8.7912e-04 |              8.791e-04 |      1e-05 | PASS
+V3 pair 08 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              1.144e-15 |              1.000e-13 |         <= | PASS
+V3 pair 09 |R_all| recomputed (<= 1e-12)                   |              1.078e-14 |              1.000e-12 |         <= | PASS
+V3 pair 09 floor F equals reference                        |             5.8393e-04 |              5.839e-04 |      1e-12 | PASS
+V3 pair 09 |Z''(t*)| equals reference                      |             1.2132e+02 |              1.213e+02 |      1e-10 | PASS
+V3 pair 09 shipped floor vs 30-digit floor (<= 1e-5)       |             5.8393e-04 |              5.839e-04 |      1e-05 | PASS
+V3 pair 09 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              2.698e-15 |              1.000e-13 |         <= | PASS
+V3 pair 10 |R_all| recomputed (<= 1e-12)                   |              4.457e-14 |              1.000e-12 |         <= | PASS
+V3 pair 10 floor F equals reference                        |             4.1721e-04 |              4.172e-04 |      1e-12 | PASS
+V3 pair 10 |Z''(t*)| equals reference                      |             8.5453e+01 |              8.545e+01 |      1e-10 | PASS
+V3 pair 10 shipped floor vs 30-digit floor (<= 1e-5)       |             4.1721e-04 |              4.172e-04 |      1e-05 | PASS
+V3 pair 10 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              5.237e-14 |              1.000e-13 |         <= | PASS
+V3 pair 11 |R_all| recomputed (<= 1e-12)                   |              5.810e-15 |              1.000e-12 |         <= | PASS
+V3 pair 11 floor F equals reference                        |             2.0215e-03 |              2.022e-03 |      1e-12 | PASS
+V3 pair 11 |Z''(t*)| equals reference                      |             3.9134e+02 |              3.913e+02 |      1e-10 | PASS
+V3 pair 11 shipped floor vs 30-digit floor (<= 1e-5)       |             2.0215e-03 |              2.022e-03 |      1e-05 | PASS
+V3 pair 11 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              3.272e-14 |              1.000e-13 |         <= | PASS
+V3 pair 12 |R_all| recomputed (<= 1e-12)                   |              2.246e-13 |              1.000e-12 |         <= | PASS
+V3 pair 12 floor F equals reference                        |             1.3075e-03 |              1.307e-03 |      1e-12 | PASS
+V3 pair 12 |Z''(t*)| equals reference                      |             2.2031e+02 |              2.203e+02 |      1e-10 | PASS
+V3 pair 12 shipped floor vs 30-digit floor (<= 1e-5)       |             1.3075e-03 |              1.307e-03 |      1e-05 | PASS
+V3 pair 12 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              2.425e-14 |              1.000e-13 |         <= | PASS
+V3 pair 13 |R_all| recomputed (<= 1e-12)                   |              5.482e-15 |              1.000e-12 |         <= | PASS
+V3 pair 13 floor F equals reference                        |             1.1551e-03 |              1.155e-03 |      1e-12 | PASS
+V3 pair 13 |Z''(t*)| equals reference                      |             1.9025e+02 |              1.903e+02 |      1e-10 | PASS
+V3 pair 13 shipped floor vs 30-digit floor (<= 1e-5)       |             1.1551e-03 |              1.155e-03 |      1e-05 | PASS
+V3 pair 13 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              7.988e-16 |              1.000e-13 |         <= | PASS
+V3 pair 14 |R_all| recomputed (<= 1e-12)                   |              6.737e-14 |              1.000e-12 |         <= | PASS
+V3 pair 14 floor F equals reference                        |             5.7753e-04 |              5.775e-04 |      1e-12 | PASS
+V3 pair 14 |Z''(t*)| equals reference                      |             8.2516e+01 |              8.252e+01 |      1e-10 | PASS
+V3 pair 14 shipped floor vs 30-digit floor (<= 1e-5)       |             5.7753e-04 |              5.775e-04 |      1e-05 | PASS
+V3 pair 14 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              1.040e-15 |              1.000e-13 |         <= | PASS
+V3 pair 15 |R_all| recomputed (<= 1e-12)                   |              2.370e-14 |              1.000e-12 |         <= | PASS
+V3 pair 15 floor F equals reference                        |             4.9335e-04 |              4.933e-04 |      1e-12 | PASS
+V3 pair 15 |Z''(t*)| equals reference                      |             6.7012e+01 |              6.701e+01 |      1e-10 | PASS
+V3 pair 15 shipped floor vs 30-digit floor (<= 1e-5)       |             4.9335e-04 |              4.933e-04 |      1e-05 | PASS
+V3 pair 15 |Z_dd - mpmath| at the extremum (<= 1e-13)      |              3.494e-16 |              1.000e-13 |         <= | PASS
+V3 (log omega)'' closed form vs numerical, t=10            |            -1.7331e-02 |             -1.733e-02 |      1e-08 | PASS
+V3 |t^2 (log omega)''| <= 7/4, t=10                        |              1.733e+00 |              1.750e+00 |         <= | PASS
+V3 (log omega)'' closed form vs numerical, t=7005.08       |            -3.5663e-08 |             -3.566e-08 |      1e-08 | PASS
+V3 |t^2 (log omega)''| <= 7/4, t=7005.08                   |              1.750e+00 |              1.750e+00 |         <= | PASS
+V3 (log omega)'' closed form vs numerical, t=8.4e+09       |            -2.4802e-20 |             -2.480e-20 |      1e-08 | PASS
+V3 |t^2 (log omega)''| <= 7/4, t=8.4e+09                   |              1.750e+00 |              1.750e+00 |         <= | PASS
+V3 t^2 (log omega)'' at t=8.4e9 -> -1.75                   |                -1.7500 |                  -1.75 |      1e-12 | PASS
+V3 endpoint identity (3.16) in 80-bit arithmetic, 2736 pairs (ordinate rounding 1e-8) |              5.319e-09 |              1.000e-08 |         <= | PASS
+V3 bounds (3.17) violated                                  |                      0 |                      0 |          0 | PASS
+V3 endpoint identity exact, pair 252 (<= 1e-30)            |              5.103e-41 |              1.000e-30 |         <= | PASS
+V3 endpoint identity exact, pair 637 (<= 1e-30)            |              7.631e-41 |              1.000e-30 |         <= | PASS
+V3 endpoint identity exact, pair 798 (<= 1e-30)            |              3.093e-41 |              1.000e-30 |         <= | PASS
+V3 max eta = S_end/(2 far) - 1 over the ensemble           |                 0.6163 |                   info |          - | PASS
+V3 eta >= 0 on every pair                                  |                   True |                   True |          0 | PASS
+    [V3 done in 124.3s]
+
+--- V4: the sweep of the transposed detector (Section 3.6) ---
+V4 sweep rows                                              |                   2736 |                   2736 |          0 | PASS
+V4 sweep sign changes                                      |                      0 |                      0 |          0 | PASS
+V4 largest Ghat over all pairs (-3.93e3)                   |               -3934.54 |               -3930.00 |         10 | PASS
+V4 ... attained at a pair with g = 0.0448                  |                0.04478 |                 0.0448 |     0.0001 | PASS
+V4 ... among the ten widest gaps                           |                   True |                   True |          0 | PASS
+V4 min H/(g/2) (3.49)                                      |                  3.486 |                   3.49 |       0.01 | PASS
+V4 median H/(g/2) (16.0)                                   |                  16.01 |                   16.0 |       0.05 | PASS
+V4 max RHS of (3.23) (0.346)                               |                 0.3457 |                  0.346 |      0.002 | PASS
+V4 pairs violating (3.23)                                  |                      0 |                      0 |          0 | PASS
+V4 max Ghat on 200 random pairs (<0)                       |                -3965.8 |                     <0 |          - | PASS
+V4 sweep far vs rows far, max rel dev                      |              3.380e-12 |              1.000e-10 |         <= | PASS
+V4 sweep r vs rows r, max rel dev                          |              5.011e-11 |              1.000e-10 |         <= | PASS
+    [V4 done in 0.9s]
+
+--- V5: displacement law (Theorem B, Tables B.1-B.2) ---
+V5 corr(delta, prediction), 15 pairs (0.999998)            |              0.9999981 |               0.999998 |      2e-06 | PASS
+V5 median rel. err. (%) (0.36)                             |                  0.357 |                   0.36 |       0.01 | PASS
+V5 max rel. err. (%) (7.5)                                 |                   7.52 |                   7.52 |       0.01 | PASS
+V5 signs agree on all 15 pairs                             |                   True |                   True |          0 | PASS
+V5 max error at the pair with the smallest |delta|         |                      8 |                      8 |          0 | PASS
+V5 ... which has the smallest |lambda_far|                 |                      8 |                      8 |          0 | PASS
+V5 ... |delta| there (1.5e-7)                              |              1.513e-07 |                1.5e-07 |      5e-09 | PASS
+V5 ... |lambda_far| there (0.034)                          |                 0.0338 |                  0.034 |     0.0005 | PASS
+V5 ... absolute error there (1.1e-8)                       |               1.14e-08 |                1.1e-08 |      1e-09 | PASS
+V5 error on the other fourteen pairs <= 1.0%               |              9.940e-01 |              1.000e+00 |         <= | PASS
+V5 |delta| range (1.5e-7 .. 4.1e-5)                        |     1.51e-07..4.06e-05 |         1.5e-7..4.1e-5 |          - | PASS
+V5 normalised spacings of the 15 pairs (0.0139..0.0257)    |         0.0139..0.0257 |         0.0139..0.0257 |          - | PASS
+V5 range of |delta|                                        |       1.5e-07..4.1e-05 |                   info |          - | PASS
+V5 100k reference pairs                                    |                     30 |                     30 |          0 | PASS
+V5 corr(delta, prediction) 100k                            |               0.999994 |               0.999994 |      2e-06 | PASS
+V5 median rel. err. (%) 100k                               |                  0.185 |                  0.185 |      0.005 | PASS
+V5 max rel. err. (%) 100k                                  |                  2.859 |                  2.859 |      0.005 | PASS
+V5 2M reference pairs                                      |                     15 |                     15 |          0 | PASS
+V5 corr(delta, prediction) 2M                              |               0.999997 |               0.999997 |      2e-06 | PASS
+V5 median rel. err. (%) 2M                                 |                  0.459 |                  0.459 |      0.005 | PASS
+V5 max rel. err. (%) 2M                                    |                  1.577 |                  1.577 |      0.005 | PASS
+V5 pair 01 lambda_far vs table                             |               0.593086 |               0.593086 |      1e-06 | PASS
+V5 pair 01 delta recomputed                                |             1.2895e-06 |              1.290e-06 |      1e-06 | PASS
+V5 pair 01 prediction                                      |             1.2787e-06 |              1.279e-06 |      1e-09 | PASS
+V5 pair 02 lambda_far vs table                             |               2.590688 |               2.590688 |      1e-06 | PASS
+V5 pair 02 delta recomputed                                |             7.0249e-06 |              7.025e-06 |      1e-06 | PASS
+V5 pair 02 prediction                                      |             7.0206e-06 |              7.021e-06 |      1e-09 | PASS
+V5 pair 03 lambda_far vs table                             |               0.229392 |               0.229392 |      1e-06 | PASS
+V5 pair 03 delta recomputed                                |             7.5363e-07 |              7.536e-07 |      1e-06 | PASS
+V5 pair 03 prediction                                      |             7.5566e-07 |              7.557e-07 |      1e-09 | PASS
+V5 pair 04 lambda_far vs table                             |              -1.444124 |              -1.444124 |      1e-06 | PASS
+V5 pair 04 delta recomputed                                |            -4.9966e-06 |             -4.997e-06 |      1e-06 | PASS
+V5 pair 04 prediction                                      |            -4.9658e-06 |             -4.966e-06 |      1e-09 | PASS
+V5 pair 05 lambda_far vs table                             |               2.543217 |               2.543217 |      1e-06 | PASS
+V5 pair 05 delta recomputed                                |             1.0727e-05 |              1.073e-05 |      1e-06 | PASS
+V5 pair 05 prediction                                      |             1.0671e-05 |              1.067e-05 |      1e-09 | PASS
+V5 pair 06 lambda_far vs table                             |               3.149969 |               3.149969 |      1e-06 | PASS
+V5 pair 06 delta recomputed                                |             1.4045e-05 |              1.405e-05 |      1e-06 | PASS
+V5 pair 06 prediction                                      |             1.3966e-05 |              1.397e-05 |      1e-09 | PASS
+V5 pair 07 lambda_far vs table                             |              -5.488679 |              -5.488679 |      1e-06 | PASS
+V5 pair 07 delta recomputed                                |            -2.4461e-05 |             -2.446e-05 |      1e-06 | PASS
+V5 pair 07 prediction                                      |            -2.4428e-05 |             -2.443e-05 |      1e-09 | PASS
+V5 pair 08 lambda_far vs table                             |              -1.096484 |              -1.096484 |      1e-06 | PASS
+V5 pair 08 delta recomputed                                |            -5.1078e-06 |             -5.108e-06 |      1e-06 | PASS
+V5 pair 08 prediction                                      |            -5.1330e-06 |             -5.133e-06 |      1e-09 | PASS
+V5 pair 09 lambda_far vs table                             |              -0.033795 |              -0.033795 |      1e-06 | PASS
+V5 pair 09 delta recomputed                                |            -1.5130e-07 |             -1.513e-07 |      1e-06 | PASS
+V5 pair 09 prediction                                      |            -1.6268e-07 |             -1.627e-07 |      1e-09 | PASS
+V5 pair 10 lambda_far vs table                             |              -0.055672 |              -0.055672 |      1e-06 | PASS
+V5 pair 10 delta recomputed                                |            -2.7281e-07 |             -2.728e-07 |      1e-06 | PASS
+V5 pair 10 prediction                                      |            -2.7184e-07 |             -2.718e-07 |      1e-09 | PASS
+V5 pair 11 lambda_far vs table                             |               0.794327 |               0.794327 |      1e-06 | PASS
+V5 pair 11 delta recomputed                                |             4.1131e-06 |              4.113e-06 |      1e-06 | PASS
+V5 pair 11 prediction                                      |             4.1036e-06 |              4.104e-06 |      1e-09 | PASS
+V5 pair 12 lambda_far vs table                             |              -6.827503 |              -6.827503 |      1e-06 | PASS
+V5 pair 12 delta recomputed                                |            -4.0603e-05 |             -4.060e-05 |      1e-06 | PASS
+V5 pair 12 prediction                                      |            -4.0550e-05 |             -4.055e-05 |      1e-09 | PASS
+V5 pair 13 lambda_far vs table                             |               0.726168 |               0.726168 |      1e-06 | PASS
+V5 pair 13 delta recomputed                                |             4.3988e-06 |              4.399e-06 |      1e-06 | PASS
+V5 pair 13 prediction                                      |             4.4095e-06 |              4.410e-06 |      1e-09 | PASS
+V5 pair 14 lambda_far vs table                             |              -1.080731 |              -1.080731 |      1e-06 | PASS
+V5 pair 14 delta recomputed                                |            -7.6417e-06 |             -7.642e-06 |      1e-06 | PASS
+V5 pair 14 prediction                                      |            -7.5658e-06 |             -7.566e-06 |      1e-09 | PASS
+V5 pair 15 lambda_far vs table                             |              -2.336898 |              -2.336898 |      1e-06 | PASS
+V5 pair 15 delta recomputed                                |            -1.7255e-05 |             -1.725e-05 |      1e-06 | PASS
+V5 pair 15 prediction                                      |            -1.7209e-05 |             -1.721e-05 |      1e-09 | PASS
+V5 errors (%) with double-precision midpoints, 15 pairs: max |                 331.94 |                   info |          - | PASS
+V5 ... median (2.45)                                       |                   2.45 |                   2.45 |       0.15 | PASS
+V5 ... max (332)                                           |                  331.9 |                    332 |          5 | PASS
+V5 Lehmer pair gamma_6709                                  |            7005.062866 |            7005.062866 |      1e-06 | PASS
+V5 Lehmer pair g                                           |               0.037698 |               0.037698 |      1e-06 | PASS
+V5 Lehmer pair lambda_far                                  |                 0.7784 |                 0.7784 |     0.0001 | PASS
+V5 Lehmer pair far                                         |                  2.428 |                  2.428 |      0.001 | PASS
+V5 Lehmer delta predicted (1.383e-4)                       |             1.3828e-04 |              1.383e-04 |      0.001 | PASS
+V5 Lehmer delta measured (1.397e-4)                        |             1.3967e-04 |              1.397e-04 |      0.001 | PASS
+V5 Lehmer rel. err. (%) (1.0)                              |                   1.00 |                    1.0 |       0.05 | PASS
+V5 Lehmer floor measured                                   |             3.9674e-03 |              3.967e-03 |      1e-09 | PASS
+V5 Lehmer (g^2/8)|Z''(t0)|                                 |             3.9684e-03 |              3.968e-03 |      1e-09 | PASS
+V5 Lehmer floor formula error (%) (0.03)                   |                  0.027 |                   0.03 |      0.005 | PASS
+V5 Lehmer R_3000 at X=1e2                                  |                -0.0002 |                -0.0002 |      1e-09 | PASS
+V5 Lehmer R_3000 at X=1e4                                  |                +0.0015 |                +0.0015 |      1e-09 | PASS
+V5 Lehmer R_3000 at X=1e7                                  |                +0.0080 |                +0.0080 |      1e-09 | PASS
+V5 Lehmer max |R_3000| over X (<= 0.009)                   |              8.537e-03 |              9.000e-03 |         <= | PASS
+V5 Lehmer log|P_1e4| recomputed                            |              -3.125001 |              -3.125001 |      1e-09 | PASS
+    [V5 done in 193.0s]
+
+--- V6: harmonic truncation, Euler regression, smooth cutoffs (Section 5.2) ---
+V6 Delta_0(1e2)                                            |           0.2381784258 |           0.2381784258 |      1e-09 | PASS
+V6 Delta_0(1e7)                                            |           0.2386607628 |           0.2386607628 |      1e-09 | PASS
+V6 p=2 term of Delta_0                                     |       0.15298926591521 |       0.15298926591521 |      1e-13 | PASS
+V6 p=2 share of Delta_0 (64%)                              |                  0.641 |                   0.64 |      0.005 | PASS
+V6 Delta_0 tail beyond 1e7 < 2e-9                          |              1.553e-09 |              2.000e-09 |         <= | PASS
+V6 8p4e9 X=1e2 a/b/R2 (Table 5.1)                          |   1.9906/0.7460/0.9377 |   1.9906/0.7460/0.9377 |      1e-09 | PASS
+V6 8p4e9 X=1e2 se(a)/se(b)/-                               |   0.0136/0.0052/0.0000 |   0.0136/0.0052/0.0000 |      1e-09 | PASS
+V6 2M X=1e2 a/b/R2 (Table 5.1)                             |   1.9542/0.7006/0.9419 |   1.9542/0.7006/0.9419 |      1e-09 | PASS
+V6 2M X=1e2 se(a)/se(b)/-                                  |   0.0074/0.0039/0.0000 |   0.0074/0.0039/0.0000 |      1e-09 | PASS
+V6 8p4e9 X=1e3 a/b/R2 (Table 5.1)                          |   1.9959/0.7401/0.9415 |   1.9959/0.7401/0.9415 |      1e-09 | PASS
+V6 8p4e9 X=1e3 se(a)/se(b)/-                               |   0.0132/0.0050/0.0000 |   0.0132/0.0050/0.0000 |      1e-09 | PASS
+V6 2M X=1e3 a/b/R2 (Table 5.1)                             |   1.9770/0.8223/0.9430 |   1.9770/0.8223/0.9430 |      1e-09 | PASS
+V6 2M X=1e3 se(a)/se(b)/-                                  |   0.0074/0.0046/0.0000 |   0.0074/0.0046/0.0000 |      1e-09 | PASS
+V6 8p4e9 X=1e4 a/b/R2 (Table 5.1)                          |   1.9923/0.7814/0.9407 |   1.9923/0.7814/0.9407 |      1e-09 | PASS
+V6 8p4e9 X=1e4 se(a)/se(b)/-                               |   0.0133/0.0053/0.0000 |   0.0133/0.0053/0.0000 |      1e-09 | PASS
+V6 2M X=1e4 a/b/R2 (Table 5.1)                             |   1.9512/0.9107/0.9503 |   1.9512/0.9107/0.9503 |      1e-09 | PASS
+V6 2M X=1e4 se(a)/se(b)/-                                  |   0.0069/0.0047/0.0000 |   0.0069/0.0047/0.0000 |      1e-09 | PASS
+V6 8p4e9 X=1e5 a/b/R2 (Table 5.1)                          |   1.9645/0.8326/0.9434 |   1.9645/0.8326/0.9434 |      1e-09 | PASS
+V6 8p4e9 X=1e5 se(a)/se(b)/-                               |   0.0130/0.0055/0.0000 |   0.0130/0.0055/0.0000 |      1e-09 | PASS
+V6 2M X=1e5 a/b/R2 (Table 5.1)                             |   1.9098/0.9111/0.9630 |   1.9098/0.9111/0.9630 |      1e-09 | PASS
+V6 2M X=1e5 se(a)/se(b)/-                                  |   0.0059/0.0040/0.0000 |   0.0059/0.0040/0.0000 |      1e-09 | PASS
+V6 8p4e9 X=1e6 a/b/R2 (Table 5.1)                          |   1.9596/0.9024/0.9471 |   1.9596/0.9024/0.9471 |      1e-09 | PASS
+V6 8p4e9 X=1e6 se(a)/se(b)/-                               |   0.0126/0.0057/0.0000 |   0.0126/0.0057/0.0000 |      1e-09 | PASS
+V6 2M X=1e6 a/b/R2 (Table 5.1)                             |   1.8691/0.9303/0.9733 |   1.8691/0.9303/0.9733 |      1e-09 | PASS
+V6 2M X=1e6 se(a)/se(b)/-                                  |   0.0050/0.0034/0.0000 |   0.0050/0.0034/0.0000 |      1e-09 | PASS
+V6 8p4e9 X=1e7 a/b/R2 (Table 5.1)                          |   1.9371/0.9356/0.9534 |   1.9371/0.9356/0.9534 |      1e-09 | PASS
+V6 8p4e9 X=1e7 se(a)/se(b)/-                               |   0.0118/0.0055/0.0000 |   0.0118/0.0055/0.0000 |      1e-09 | PASS
+V6 2M X=1e7 a/b/R2 (Table 5.1)                             |   1.8356/0.9470/0.9792 |   1.8356/0.9470/0.9792 |      1e-09 | PASS
+V6 2M X=1e7 se(a)/se(b)/-                                  |   0.0045/0.0030/0.0000 |   0.0045/0.0030/0.0000 |      1e-09 | PASS
+V6 a at X=1e7 (1.937)                                      |                 1.9371 |                  1.937 |     0.0005 | PASS
+V6 b at X=1e7 (0.936)                                      |                 0.9356 |                  0.936 |     0.0005 | PASS
+V6 R2 at X=1e7 (0.953)                                     |                 0.9534 |                  0.953 |     0.0005 | PASS
+V6 b at X=1e2 (0.746)                                      |                 0.7460 |                  0.746 |     0.0005 | PASS
+V6 R2 at X=1e2 (0.938)                                     |                 0.9377 |                  0.938 |     0.0005 | PASS
+V6 |a - 2| <= 0.07 at every X                              |              6.293e-02 |              7.000e-02 |         <= | PASS
+V6 b rises by ~30 s.e. over the scan                       |                   34.2 |                   34.5 |          5 | PASS
+V6 a drift at X=1e7 in s.e. (5)                            |                    5.3 |                    5.3 |          1 | PASS
+V6 2M X=1e4 a/b/R2 text (1.951/0.911/0.950)                |   1.9512/0.9107/0.9503 |   1.9510/0.9110/0.9500 |     0.0005 | PASS
+V6 2M X=1e7 -/b/R2 text (0.947/0.979)                      |   0.0000/0.9470/0.9792 |   0.0000/0.9470/0.9790 |     0.0005 | PASS
+V6 R2(g only) (0.467)                                      |                 0.4673 |                  0.467 |     0.0005 | PASS
+V6 R2(g only) equals table                                 |             4.6725e-01 |              4.673e-01 |      1e-09 | PASS
+V6 g-only log-log slope (1.95)                             |                  1.953 |                  1.953 |      0.005 | PASS
+V6 corr(log g, log F) (0.68)                               |                  0.684 |                  0.684 |      0.005 | PASS
+V6 R2(g + log far) (0.747)                                 |                 0.7474 |                  0.747 |     0.0005 | PASS
+V6 R2(g + logP) X=1e4 (0.941)                              |                 0.9407 |                  0.941 |     0.0005 | PASS
+V6 R2(g + logP + far) X=1e4 (0.942)                        |                 0.9419 |                  0.942 |     0.0005 | PASS
+V6 sharp weight reproduces the exact product (1e-9)        |              0.000e+00 |              1.000e-09 |         <= | PASS
+V6 smooth sharp X=1e2 a/b/R2 (Table 5.2)                   |   1.9906/0.7460/0.9377 |   1.9906/0.7460/0.9377 |      1e-06 | PASS
+V6 smooth sharp X=1e3 a/b/R2 (Table 5.2)                   |   1.9959/0.7401/0.9415 |   1.9959/0.7401/0.9415 |      1e-06 | PASS
+V6 smooth sharp X=1e4 a/b/R2 (Table 5.2)                   |   1.9923/0.7814/0.9407 |   1.9923/0.7814/0.9407 |      1e-06 | PASS
+V6 smooth sharp X=1e5 a/b/R2 (Table 5.2)                   |   1.9645/0.8326/0.9434 |   1.9645/0.8326/0.9434 |      1e-06 | PASS
+V6 smooth sharp X=1e6 a/b/R2 (Table 5.2)                   |   1.9596/0.9024/0.9471 |   1.9596/0.9024/0.9471 |      1e-06 | PASS
+V6 smooth sharp X=1e7 a/b/R2 (Table 5.2)                   |   1.9371/0.9356/0.9534 |   1.9371/0.9356/0.9534 |      1e-06 | PASS
+V6 smooth exp4 X=1e2 a/b/R2 (Table 5.2)                    |   1.9926/0.7673/0.9468 |   1.9927/0.7673/0.9468 |      1e-06 | PASS
+V6 smooth exp4 X=1e3 a/b/R2 (Table 5.2)                    |   1.9934/0.7523/0.9497 |   1.9934/0.7523/0.9497 |      1e-06 | PASS
+V6 smooth exp4 X=1e4 a/b/R2 (Table 5.2)                    |   1.9973/0.7871/0.9473 |   1.9973/0.7871/0.9473 |      1e-06 | PASS
+V6 smooth exp4 X=1e5 a/b/R2 (Table 5.2)                    |   1.9684/0.8402/0.9498 |   1.9684/0.8402/0.9498 |      1e-06 | PASS
+V6 smooth exp4 X=1e6 a/b/R2 (Table 5.2)                    |   1.9567/0.9080/0.9519 |   1.9567/0.9080/0.9519 |      1e-06 | PASS
+V6 smooth exp4 X=1e7 a/b/R2 (Table 5.2)                    |   1.9399/0.9433/0.9576 |   1.9399/0.9433/0.9576 |      1e-06 | PASS
+V6 smooth bump X=1e2 a/b/R2 (Table 5.2)                    |   1.9948/0.7578/0.9400 |   1.9948/0.7578/0.9400 |      1e-06 | PASS
+V6 smooth bump X=1e3 a/b/R2 (Table 5.2)                    |   1.9928/0.7440/0.9448 |   1.9928/0.7440/0.9448 |      1e-06 | PASS
+V6 smooth bump X=1e4 a/b/R2 (Table 5.2)                    |   1.9972/0.7781/0.9435 |   1.9972/0.7781/0.9435 |      1e-06 | PASS
+V6 smooth bump X=1e5 a/b/R2 (Table 5.2)                    |   1.9724/0.8340/0.9469 |   1.9724/0.8340/0.9469 |      1e-06 | PASS
+V6 smooth bump X=1e6 a/b/R2 (Table 5.2)                    |   1.9597/0.8995/0.9480 |   1.9597/0.8995/0.9480 |      1e-06 | PASS
+V6 smooth bump X=1e7 a/b/R2 (Table 5.2)                    |   1.9387/0.9371/0.9540 |   1.9387/0.9371/0.9540 |      1e-06 | PASS
+V6 max shift of b under smooth cutoffs                     |              2.129e-02 |              2.129e-02 |         <= | PASS
+V6 exp4 preserves the climb of b                           |         0.767 -> 0.943 |             increasing |          - | PASS
+V6 bump preserves the climb of b                           |         0.758 -> 0.937 |             increasing |          - | PASS
+V6 smooth sums recomputed on 5 pairs, max dev              |              0.000e+00 |              1.000e-09 |         <= | PASS
+    (smooth recomputation 4s)
+V6 log|P_X| 8.4e9 recomputed on 2736 pairs, max dev        |              0.000e+00 |              1.000e-09 |         <= | PASS
+V6 log|P_X| 2M recomputed on 6088 pairs, max dev           |              0.000e+00 |              1.000e-09 |         <= | PASS
+    (prime sums: 631.6s)
+    [V6 done in 635.4s]
+
+--- V7: decomposition of the floor (Section 5.4, Table 5.3) ---
+V7 R Delta=100 X=1e2 med/sd/max (Table 5.3)                |   -0.0040/0.0172/0.057 |   -0.0040/0.0172/0.057 |      1e-09 | PASS
+V7 R Delta=100 X=1e3 med/sd/max (Table 5.3)                |   +0.0021/0.0134/0.050 |   +0.0021/0.0134/0.050 |      1e-09 | PASS
+V7 R Delta=100 X=1e4 med/sd/max (Table 5.3)                |   -0.0003/0.0118/0.043 |   -0.0003/0.0118/0.043 |      1e-09 | PASS
+V7 R Delta=100 X=1e5 med/sd/max (Table 5.3)                |   +0.0005/0.0118/0.044 |   +0.0005/0.0118/0.044 |      1e-09 | PASS
+V7 R Delta=100 X=1e6 med/sd/max (Table 5.3)                |   +0.0006/0.0110/0.044 |   +0.0006/0.0110/0.044 |      1e-09 | PASS
+V7 R Delta=100 X=1e7 med/sd/max (Table 5.3)                |   +0.0005/0.0098/0.041 |   +0.0005/0.0098/0.041 |      1e-09 | PASS
+V7 R Delta=1000 X=1e2 med/sd/max (Table 5.3)               |   +0.0013/0.0025/0.042 |   +0.0013/0.0025/0.042 |      1e-09 | PASS
+V7 R Delta=1000 X=1e3 med/sd/max (Table 5.3)               |   +0.0001/0.0027/0.039 |   +0.0001/0.0027/0.039 |      1e-09 | PASS
+V7 R Delta=1000 X=1e4 med/sd/max (Table 5.3)               |   +0.0005/0.0033/0.043 |   +0.0005/0.0033/0.043 |      1e-09 | PASS
+V7 R Delta=1000 X=1e5 med/sd/max (Table 5.3)               |   +0.0004/0.0038/0.041 |   +0.0004/0.0038/0.041 |      1e-09 | PASS
+V7 R Delta=1000 X=1e6 med/sd/max (Table 5.3)               |   +0.0005/0.0035/0.034 |   +0.0005/0.0035/0.034 |      1e-09 | PASS
+V7 R Delta=1000 X=1e7 med/sd/max (Table 5.3)               |   +0.0004/0.0031/0.039 |   +0.0004/0.0031/0.039 |      1e-09 | PASS
+V7 Delta=1000 medians in [0.0001, 0.0013]                  |         0.0001..0.0013 |        [0.0001,0.0013] |          - | PASS
+V7 Delta=1000 s.d. in [0.0025, 0.0038]                     |         0.0025..0.0038 |        [0.0025,0.0038] |          - | PASS
+V7 Delta=100 s.d. in [0.010, 0.017]                        |         0.0098..0.0172 |          [0.010,0.017] |          - | PASS
+V7 2M R Delta=1000 X=1e2 med/sd                            |         +0.0014/0.0022 |         +0.0014/0.0022 |      1e-09 | PASS
+V7 2M R Delta=1000 X=1e3 med/sd                            |         -0.0002/0.0024 |         -0.0002/0.0024 |      1e-09 | PASS
+V7 2M R Delta=1000 X=1e4 med/sd                            |         +0.0002/0.0031 |         +0.0002/0.0031 |      1e-09 | PASS
+V7 2M R Delta=1000 X=1e5 med/sd                            |         +0.0003/0.0036 |         +0.0003/0.0036 |      1e-09 | PASS
+V7 2M R Delta=1000 X=1e6 med/sd                            |         +0.0003/0.0033 |         +0.0003/0.0033 |      1e-09 | PASS
+V7 2M R Delta=1000 X=1e7 med/sd                            |         +0.0003/0.0035 |         +0.0003/0.0035 |      1e-09 | PASS
+V7 2M max |median| (0.0014)                                |              1.432e-03 |              1.450e-03 |         <= | PASS
+V7 2M max s.d. (0.0037)                                    |              3.554e-03 |              3.750e-03 |         <= | PASS
+V7 S_Delta recomputed on 2736 pairs, max dev               |              0.000e+00 |              1.000e-09 |         <= | PASS
+V7 pair-term curvature in a, X=1e2                         |                -0.0039 |                -0.0039 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e2                           |                -0.2539 |                -0.2539 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e2                          |                -0.0059 |                -0.0059 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e2                          |              4.279e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e2                            |               1.990603 |               1.990603 |      1e-09 | PASS
+V7 exact accounting of b, X=1e2                            |               0.746024 |               0.746024 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e2                                 |                 -0.682 |                 -0.682 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e2                              |                  0.123 |                  0.123 |      1e-09 | PASS
+V7 sd(S_far) X=1e2                                         |                  0.320 |                  0.320 |      1e-09 | PASS
+V7 pair-term curvature in a, X=1e3                         |                -0.0088 |                -0.0088 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e3                           |                -0.2597 |                -0.2597 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e3                          |                +0.0041 |                +0.0041 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e3                          |              4.857e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e3                            |               1.995857 |               1.995857 |      1e-09 | PASS
+V7 exact accounting of b, X=1e3                            |               0.740129 |               0.740129 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e3                                 |                 -0.706 |                 -0.706 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e3                              |                  0.497 |                  0.497 |      1e-09 | PASS
+V7 sd(S_far) X=1e3                                         |                  0.320 |                  0.320 |      1e-09 | PASS
+V7 pair-term curvature in a, X=1e4                         |                -0.0156 |                -0.0156 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e4                           |                -0.2182 |                -0.2182 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e4                          |                +0.0072 |                +0.0072 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e4                          |              7.202e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e4                            |               1.992321 |               1.992321 |      1e-09 | PASS
+V7 exact accounting of b, X=1e4                            |               0.781398 |               0.781398 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e4                                 |                 -0.620 |                 -0.620 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e4                              |                  0.559 |                  0.559 |      1e-09 | PASS
+V7 sd(S_far) X=1e4                                         |                  0.290 |                  0.290 |      1e-09 | PASS
+V7 pair-term curvature in a, X=1e5                         |                -0.0243 |                -0.0243 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e5                           |                -0.1670 |                -0.1670 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e5                          |                -0.0116 |                -0.0116 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e5                          |              3.914e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e5                            |               1.964460 |               1.964460 |      1e-09 | PASS
+V7 exact accounting of b, X=1e5                            |               0.832617 |               0.832617 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e5                                 |                 -0.503 |                 -0.503 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e5                              |                  0.477 |                  0.477 |      1e-09 | PASS
+V7 sd(S_far) X=1e5                                         |                  0.257 |                  0.257 |      1e-09 | PASS
+V7 pair-term curvature in a, X=1e6                         |                -0.0349 |                -0.0349 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e6                           |                -0.0970 |                -0.0970 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e6                          |                -0.0060 |                -0.0060 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e6                          |              5.241e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e6                            |               1.959565 |               1.959565 |      1e-09 | PASS
+V7 exact accounting of b, X=1e6                            |               0.902397 |               0.902397 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e6                                 |                 -0.308 |                 -0.308 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e6                              |                  0.215 |                  0.215 |      1e-09 | PASS
+V7 sd(S_far) X=1e6                                         |                  0.226 |                  0.226 |      1e-09 | PASS
+V7 pair-term curvature in a, X=1e7                         |                -0.0475 |                -0.0475 |      1e-09 | PASS
+V7 slope of S_far on logP, X=1e7                           |                -0.0640 |                -0.0640 |      1e-09 | PASS
+V7 slope of S_far on log g, X=1e7                          |                -0.0158 |                -0.0158 |      1e-09 | PASS
+V7 residual slopes < 0.001, X=1e7                          |              4.486e-04 |              1.000e-03 |         <= | PASS
+V7 exact accounting of a, X=1e7                            |               1.937067 |               1.937067 |      1e-09 | PASS
+V7 exact accounting of b, X=1e7                            |               0.935574 |               0.935574 |      1e-09 | PASS
+V7 corr(S_far, logP) X=1e7                                 |                 -0.216 |                 -0.216 |      1e-09 | PASS
+V7 corr(S_far, log far) X=1e7                              |                  0.031 |                  0.031 |      1e-09 | PASS
+V7 sd(S_far) X=1e7                                         |                  0.207 |                  0.207 |      1e-09 | PASS
+V7 curvature corrections (-0.004..-0.048)                  | -0.004/-0.009/-0.016/-0.024/-0.035/-0.047 | -0.004/-0.009/-0.016/-0.024/-0.035/-0.048 |     0.0015 | PASS
+V7 S_far slopes on logP (-0.254..-0.064)                   | -0.254/-0.260/-0.218/-0.167/-0.097/-0.064 | -0.254/-0.260/-0.218/-0.167/-0.097/-0.064 |     0.0015 | PASS
+V7 S_far slopes on log g in [-0.016, 0.008]                |       -0.0158..+0.0072 |         [-0.016,0.008] |          - | PASS
+V7 corr(S_far, logP) X=1e2 (-0.68)                         |                 -0.682 |                  -0.68 |      0.005 | PASS
+V7 corr(S_far, logP) X=1e7 (-0.22)                         |                 -0.216 |                  -0.22 |      0.005 | PASS
+V7 corr(S_far, log far) X=1e4 (0.56)                       |                  0.559 |                   0.56 |      0.005 | PASS
+V7 corr(S_far, log far) X=1e7 (0.03)                       |                  0.031 |                   0.03 |      0.005 | PASS
+V7 sd(S_far) X=1e2 (0.32)                                  |                  0.320 |                   0.32 |      0.005 | PASS
+V7 sd(S_far) X=1e7 (0.21)                                  |                  0.207 |                   0.21 |      0.005 | PASS
+V7 pair-term expansion |2Ci(y)-2(gamma+log y)| <= y^2/2    |             -2.614e-08 |              1.000e-12 |         <= | PASS
+V7 unexplained variance at X=1e7: sd(S_far)^2 (0.04)       |                 0.0426 |                  0.044 |      0.005 | PASS
+    [V7 done in 5.1s]
+
+--- V8: mediation (Section 6, Tables 6.1-6.2) ---
+V8 corr(resid_g, log far) 8.4e9                            |                 -0.725 |                 -0.725 |      0.005 | PASS
+V8 corr(resid_g, log far) 2M                               |                 -0.498 |                 -0.498 |      0.005 | PASS
+V8 100k tight pairs                                        |                    261 |                    261 |          0 | PASS
+V8 corr(resid_g, log far) 100k (-0.36)                     |                 -0.358 |                  -0.36 |      0.005 | PASS
+V8 partial corr(resid, logP | far) X=1e4                   |                  0.921 |                  0.921 |      0.001 | PASS
+V8 partial corr(resid, far | logP) X=1e4                   |                  0.048 |                  0.048 |      0.001 | PASS
+V8 corr(logP, log far) X=1e4                               |                 -0.799 |                 -0.799 |      0.001 | PASS
+V8 partial corr(resid, logP | far) X=1e7                   |                  0.939 |                  0.939 |      0.001 | PASS
+V8 partial corr(resid, far | logP) X=1e7                   |                  0.053 |                  0.053 |      0.001 | PASS
+V8 corr(logP, log far) X=1e7                               |                 -0.720 |                 -0.720 |      0.001 | PASS
+V8 2M corr(logP, log far) X=1e4 (-0.426)                   |                 -0.426 |                 -0.426 |      0.001 | PASS
+V8 adding far to (g, logP) at X=1e4: R2 0.9407 -> 0.9419   |       0.9407 -> 0.9419 |       0.9407 -> 0.9419 |     0.0005 | PASS
+V8 control indices reproduced (seed 11)                    |                   True |                   True |          0 | PASS
+V8 deficit X=1e2 means/sd/shift (Table 6.1)                | -0.643/-0.239/0.844/-0.48 | -0.643/-0.239/0.844/-0.48 |      1e-09 | PASS
+V8 deficit X=1e3 means/sd/shift (Table 6.1)                | -1.065/-0.326/0.844/-0.88 | -1.065/-0.326/0.844/-0.88 |      1e-09 | PASS
+V8 deficit X=1e4 means/sd/shift (Table 6.1)                | -1.472/-0.373/0.763/-1.44 | -1.472/-0.373/0.763/-1.44 |      1e-09 | PASS
+V8 deficit X=1e5 means/sd/shift (Table 6.1)                | -1.854/-0.324/0.707/-2.17 | -1.854/-0.324/0.707/-2.17 |      1e-09 | PASS
+V8 deficit X=1e6 means/sd/shift (Table 6.1)                | -2.219/-0.255/0.626/-3.14 | -2.219/-0.255/0.626/-3.14 |      1e-09 | PASS
+V8 deficit X=1e7 means/sd/shift (Table 6.1)                | -2.543/-0.110/0.627/-3.88 | -2.543/-0.110/0.627/-3.88 |      1e-09 | PASS
+V8 shift at X=1e2 (-0.48)                                  |                 -0.478 |                  -0.48 |       0.01 | PASS
+V8 shift at X=1e7 (-3.88)                                  |                 -3.878 |                  -3.88 |       0.01 | PASS
+V8 factor at X=1e7 (11.4)                                  |                  11.39 |                   11.4 |        0.1 | PASS
+V8 shift decreases monotonically with X                    |                   True |                   True |          0 | PASS
+V8 control log|P_X| recomputed (10), max dev               |              0.000e+00 |              1.000e-09 |         <= | PASS
+V8 control regression X=1e4 slope/intercept/corr           |      0.810/0.802/0.950 |      0.810/0.802/0.950 |      0.002 | PASS
+V8 ... equals the table                                    |              0.000e+00 |              1.000e-09 |         <= | PASS
+V8 control regression X=1e7 slope/intercept/corr           |      0.979/0.607/0.944 |      0.979/0.607/0.944 |      0.002 | PASS
+V8 ... equals the table                                    |              0.000e+00 |              1.000e-09 |         <= | PASS
+V8 control floor recomputed, gap 702178                    |             1.81414491 |             1.81414491 |      1e-10 | PASS
+V8 control floor recomputed, gap 454046                    |             1.84875464 |             1.84875464 |      1e-10 | PASS
+V8 control floor recomputed, gap 68872                     |             0.62471994 |             0.62471994 |      1e-10 | PASS
+V8 all-gap rows                                            |                 193179 |                 193179 |          0 | PASS
+V8 blocks B=1 a/b/se/R2/pcorr/sd (Table 6.2)               | 0.644/0.693/0.001/0.9216/0.841/1.407 | 0.644/0.693/0.001/0.9216/0.841/1.407 |      1e-09 | PASS
+V8 blocks B=1 corr(logF,logP), corr(logP,logg)             |            0.950/0.818 |          [0.92,0.95]/- |          - | PASS
+V8 blocks B=16 a/b/se/R2/pcorr/sd (Table 6.2)              | 1.581/0.215/0.004/0.9543/0.440/0.277 | 1.581/0.215/0.004/0.9543/0.440/0.277 |      1e-09 | PASS
+V8 blocks B=16 corr(logF,logP), corr(logP,logg)            |            0.921/0.901 |          [0.92,0.95]/- |          - | PASS
+V8 blocks B=256 a/b/se/R2/pcorr/sd (Table 6.2)             | 1.762/0.149/0.013/0.9817/0.386/0.087 | 1.762/0.149/0.013/0.9817/0.386/0.087 |      1e-09 | PASS
+V8 blocks B=256 corr(logF,logP), corr(logP,logg)           |            0.951/0.943 |          [0.92,0.95]/- |          - | PASS
+V8 blocks B=4096 a/b/se/R2/pcorr/sd (Table 6.2)            | 1.861/0.075/0.051/0.9762/0.215/0.015 | 1.861/0.075/0.051/0.9762/0.215/0.015 |      1e-09 | PASS
+V8 blocks B=4096 corr(logF,logP), corr(logP,logg)          |            0.919/0.917 |          [0.92,0.95]/- |          - | PASS
+V8 b decays 0.693 -> 0.215 -> 0.149 -> 0.075               | 0.693/0.215/0.149/0.075 | 0.693/0.215/0.149/0.075 |     0.0015 | PASS
+V8 B=4096: b in s.e. (1.5)                                 |                   1.46 |                    1.5 |        0.1 | PASS
+V8 B=256: b in s.e. (11)                                   |                   11.5 |                     11 |          1 | PASS
+V8 blocks tight subset n/a/b/R2 (680/1.914/0.886/0.945)    |  680/1.914/0.886/0.945 |  680/1.914/0.886/0.945 |     0.0015 | PASS
+V8 all-gap log|P_1e6| recomputed (20), max dev             |              3.158e-09 |              1.000e-08 |         <= | PASS
+    [V8 done in 45.0s]
+
+--- V9: far-field law, shield, GUE diagnostics (Section 7) ---
+V9 mean far 100k (Table 7.1)                               |                 4.1739 |                 4.1739 |      1e-09 | PASS
+V9 far/dens^2 100k                                         |                 1.8700 |                 1.8700 |      1e-09 | PASS
+V9 mean far 2M (Table 7.1)                                 |                 7.4958 |                 7.4958 |      1e-09 | PASS
+V9 far/dens^2 2M                                           |                 2.0020 |                 2.0020 |      1e-09 | PASS
+V9 mean far 8p4e9 (Table 7.1)                              |                27.9815 |                27.9815 |      1e-09 | PASS
+V9 far/dens^2 8p4e9                                        |                 2.5007 |                 2.5007 |      1e-09 | PASS
+V9 mean far 1e12 (Table 7.1)                               |                41.1045 |                41.1045 |      1e-09 | PASS
+V9 far/dens^2 1e12                                         |                 2.7080 |                 2.7080 |      1e-09 | PASS
+V9 mean far 1e21 (Table 7.1)                               |               128.4814 |               128.4814 |      1e-09 | PASS
+V9 far/dens^2 1e21                                         |                 2.5523 |                 2.5523 |      1e-09 | PASS
+V9 corr(mean far, dens^2) (0.9995)                         |                 0.9995 |                 0.9995 |     0.0001 | PASS
+V9 far/dens^2 at 8.4e9 (2.500)                             |                  2.501 |                  2.500 |      0.002 | PASS
+V9 mean of 3 high ensembles (2.59)                         |                  2.587 |                   2.59 |       0.01 | PASS
+V9 far median 8.4e9 (24.84)                                |                  24.84 |                  24.84 |       0.01 | PASS
+V9 far max 8.4e9 (368.35)                                  |                 368.35 |                 368.35 |       0.01 | PASS
+V9 shield prev 8.4e9 (1.354)                               |                 1.3544 |                  1.354 |      0.001 | PASS
+V9 shield next 8.4e9 (1.360)                               |                 1.3598 |                  1.360 |      0.001 | PASS
+V9 shield 100k prev/next                                   |          1.3756/1.3466 |            1.376/1.347 |      0.001 | PASS
+V9 shield 2M prev/next                                     |          1.3686/1.3716 |            1.369/1.372 |      0.001 | PASS
+V9 tight pairs in the 1e12 window                          |                     38 |                     38 |          0 | PASS
+V9 tight pairs in the 1e21 window                          |                     32 |                     32 |          0 | PASS
+V9 GUE tail ratios 100k (Table 7.2)                        |      0.657/0.675/0.670 |      0.657/0.675/0.670 |      1e-09 | PASS
+V9 lag-1 corr 100k                                         |                -0.2045 |                -0.2045 |      1e-09 | PASS
+V9 GUE tail ratios 2M (Table 7.2)                          |      0.864/0.804/0.784 |      0.864/0.804/0.784 |      1e-09 | PASS
+V9 lag-1 corr 2M                                           |                -0.2684 |                -0.2684 |      1e-09 | PASS
+V9 GUE tail ratios 8.4e9 (Table 7.2)                       |      0.887/0.981/0.957 |      0.887/0.981/0.957 |      1e-09 | PASS
+V9 lag-1 corr 8.4e9                                        |                -0.3323 |                -0.3323 |      1e-09 | PASS
+V9 LMFDB tail ratios (0.887/0.981/0.957)                   |      0.887/0.981/0.957 |      0.887/0.981/0.957 |      0.002 | PASS
+V9 LMFDB lag-1 (-0.332)                                    |                -0.3323 |                 -0.332 |      0.001 | PASS
+    [V9 done in 0.1s]
+
+--- V10: the GUE far-field constant (Theorem 7.2, Observation 7.3) ---
+V10 int (1-S^2)/x^2 = 2pi^2/3                              |              6.5797365 |              6.5797363 |      1e-05 | PASS
+V10 int S'^2/x^2 = 2pi^4/15                                |             12.9878788 |             12.9878788 |      1e-05 | PASS
+V10 C_GUE = 4pi^2/15                                       |              2.6318947 |              2.6318945 |      1e-05 | PASS
+V10 4pi^2/15 = 2.6318945069                                |           2.6318945070 |           2.6318945069 |      1e-09 | PASS
+V10 rho(x)/x^4 -> pi^4/45 at x=1e-2                        |                2.16440 |                2.16465 |       0.01 | PASS
+V10 conditional density ratio vs rho at x=0.8, a=1e-4      |             0.42874707 |             0.42874707 |      1e-06 | PASS
+V10 C(a) at s=0.02 (2.6314358)                             |              2.6314358 |              2.6314358 |      2e-07 | PASS
+V10 deficit at s=0.02 (4.6e-4)                             |               4.59e-04 |                4.6e-04 |      2e-05 | PASS
+V10 (C0-C(s))/s^2 = 1.17 - 1.26 s: intercept               |                 1.1701 |                   1.17 |      0.005 | PASS
+V10 (C0-C(s))/s^2 = 1.17 - 1.26 s: slope                   |                -1.2604 |                  -1.26 |       0.01 | PASS
+V10 linear fit max residual <= 0.0035                      |              3.325e-03 |              3.500e-03 |         <= | PASS
+V10 cubic fit constant term <= 1.4e-5                      |              1.341e-05 |              1.400e-05 |         <= | PASS
+V10 population prediction (2.610)                          |                 2.6103 |                  2.610 |      0.002 | PASS
+V10 window law int_{|x|<=100} = C - 2/100                  |                2.61189 |                2.61189 |     0.0002 | PASS
+V10 pi^2/4 differs from C_GUE by 6.7%                      |                   6.67 |                    6.7 |       0.05 | PASS
+V10 MC N=500 window 100 (2.5781)                           |                 2.5781 |                 2.5781 |      0.014 | PASS
+V10 window law E[C(s)] - 2/25 for the MC population (2.5177) |                 2.5177 |                 2.5177 |     0.0002 | PASS
+V10 MC N=500 window 25 vs prediction                       |                 2.5181 |                 2.5177 |      0.014 | PASS
+V10 window law E[C(s)] - 2/50 for the MC population (2.5577) |                 2.5577 |                 2.5577 |     0.0002 | PASS
+V10 MC N=500 window 50 vs prediction                       |                 2.5581 |                 2.5577 |      0.014 | PASS
+V10 window law E[C(s)] - 2/100 for the MC population (2.5777) |                 2.5777 |                 2.5777 |     0.0002 | PASS
+V10 MC N=500 window 100 vs prediction                      |                 2.5781 |                 2.5777 |      0.014 | PASS
+V10 MC N=500 pairs (73,446)                                |                  73446 |                  73446 |          0 | PASS
+V10 MC increment 25->50 (+0.0400)                          |                 0.0400 |                 0.0400 |       0.01 | PASS
+V10 MC increment 50->100 (+0.0200)                         |                 0.0200 |                 0.0200 |       0.01 | PASS
+V10 MC total conditioned pairs (138,619)                   |                 138619 |                 138619 |          0 | PASS
+V10 MC tail ratio s0=0.10 (1.03)                           |                  1.027 |                   1.03 |       0.01 | PASS
+V10 MC tail ratio s0=0.15 (1.00)                           |                  0.995 |                   1.00 |       0.01 | PASS
+V10 MC lag-1 (-0.304)                                      |                -0.3044 |                 -0.304 |      0.002 | PASS
+V10 MC quick tier C_GUE (N=200, window 25, +2/w)           |                 2.5949 |                 2.6319 |       0.03 | PASS
+V10 MC quick tier C_GUE (N=200, window 50, +2/w)           |                 2.5949 |                 2.6319 |       0.03 | PASS
+V10 MC quick tier lag-1 (-0.304)                           |                 -0.308 |                 -0.304 |       0.01 | PASS
+V10 MC quick tier tail ratio s0=0.10                       |                  1.015 |                   1.03 |       0.06 | PASS
+V10 MC quick tier tail ratio s0=0.15                       |                  1.004 |                   1.00 |       0.06 | PASS
+    [V10 done in 36.2s]
+
+--- V11: the certificate on the data (Section 8) ---
+V11 h0max/eps X=1e2 median/95%/median eps logX             |        2.03/3.08/0.082 |        2.03/3.08/0.082 |      0.005 | PASS
+V11 h0max/eps X=1e3 median/95%/median eps logX             |        1.60/2.47/0.123 |        1.60/2.47/0.123 |      0.005 | PASS
+V11 h0max/eps X=1e4 median/95%/median eps logX             |        1.31/2.01/0.164 |        1.31/2.01/0.164 |      0.005 | PASS
+V11 h0max/eps X=1e5 median/95%/median eps logX             |        1.10/1.78/0.205 |        1.10/1.78/0.205 |      0.005 | PASS
+V11 h0max/eps X=1e6 median/95%/median eps logX             |        0.95/1.59/0.246 |        0.95/1.59/0.246 |      0.005 | PASS
+V11 h0max/eps X=1e7 median/95%/median eps logX             |        0.82/1.43/0.287 |        0.82/1.43/0.287 |      0.005 | PASS
+V11 median(S_far(1e7) - S_far(1e2)) (-0.58)                |                 -0.579 |                  -0.58 |      0.005 | PASS
+V11 sd(S_far(1e7) - S_far(1e2)) (0.41)                     |                  0.410 |                   0.41 |      0.005 | PASS
+V11 inflation e^(6.9/4) (5.6)                              |                   5.61 |                    5.6 |       0.05 | PASS
+V11 mean log|P_X| at pairs, X=1e7 (-2.5)                   |                 -2.543 |                  -2.54 |       0.01 | PASS
+V11 median bound at X=1e7 inflated (4.6 half-gaps)         |                   4.60 |                    4.6 |       0.05 | PASS
+    [V11 done in 0.0s]
+
+--- V12: tail bounds (Section 9) ---
+V12 prime powers <= 1e7                                    |                 665134 |                 665134 |          0 | PASS
+V12 ... with k >= 2                                        |                    555 |                    555 |          0 | PASS
+V12 sum a_p                                                |          463.311140659 |            463.3111407 |      1e-07 | PASS
+V12 sum sigma_p^2                                          |           1.5904554722 |           1.5904554722 |      1e-09 | PASS
+V12 sigma                                                  |               1.261133 |                1.26113 |      1e-05 | PASS
+V12 Lambda_1                                               |           6321.4118494 |           6321.4118494 |      1e-06 | PASS
+V12 2nd-moment term (i)                                    |             1.2065e-07 |              1.210e-07 |       0.01 | PASS
+V12 2nd-moment term (ii)                                   |             2.4843e-08 |              2.490e-08 |       0.01 | PASS
+V12 2nd-moment term (iii)                                  |             4.3516e-15 |              4.400e-15 |       0.02 | PASS
+V12 2nd-moment total                                       |             1.4549e-07 |              1.460e-07 |       0.01 | PASS
+V12 first-moment bound                                     |             1.8785e-17 |              1.900e-17 |       0.02 | PASS
+V12 4th-moment crude bound                                 |             2.5899e+19 |              2.600e+19 |       0.05 | PASS
+V12 certified d(5) at s* (Table 9.1)                       |       7.055e-05 @ 4.20 |        7.06e-05 @ 4.20 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 certified d(6) at s* (Table 9.1)                       |       6.132e-07 @ 5.30 |        6.13e-07 @ 5.30 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 certified d(7) at s* (Table 9.1)                       |       1.714e-09 @ 6.47 |        1.71e-09 @ 6.47 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 certified d(8) at s* (Table 9.1)                       |       1.443e-12 @ 7.70 |        1.44e-12 @ 7.70 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 certified d(9) at s* (Table 9.1)                       |       3.462e-16 @ 8.98 |        3.46e-16 @ 8.98 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 certified d(10) at s* (Table 9.1)                      |      2.248e-20 @ 10.31 |       2.25e-20 @ 10.31 |  0.5%/0.02 | PASS
+V12 ... equals the table                                   |              0.000e+00 |              1.000e-09 |         <= | PASS
+V12 pure Bennett d(6.9)                                    |             1.2376e-04 |              1.240e-04 |       0.01 | PASS
+V12 sum log M_p(-9.5), 4096 nodes                          |       30.4273750585495 |       30.4273750585495 |      1e-12 | PASS
+V12 mesh doubling 1024->65536 changes < 1e-13              |              0.000e+00 |              1.000e-13 |         <= | PASS
+V12 exact factors for p <= 1000: count                     |                    168 |                    168 |          0 | PASS
+V12 N = H Lambda_1/(2m)                                    |             5.3327e+13 |              5.330e+13 |      0.002 | PASS
+V12 N d(u-m) at u=9.00                                     |              1.399e+00 |               1.40e+00 |       0.03 | PASS
+V12 N d(u-m) at u=9.36                                     |              6.408e-02 |               6.40e-02 |       0.03 | PASS
+V12 N d(u-m) at u=10.00                                    |              1.757e-04 |               1.80e-04 |       0.03 | PASS
+V12 prod M_p(-1), X=100                                    |               1.559923 |               1.559923 |      1e-06 | PASS
+V12 MC mean (seed 19) (1.5612)                             |                 1.5612 |                 1.5612 |     0.0005 | PASS
+V12 MC std err (0.0030)                                    |                 0.0030 |                 0.0030 |     0.0002 | PASS
+V12 sigma(X=1e4)                                           |                1.14500 |                1.14500 |      1e-05 | PASS
+V12 BR prefactor                                           |                 0.0960 |                 0.0960 |     0.0002 | PASS
+V12 BR prediction                                          |             1.9731e-06 |              1.970e-06 |      0.005 | PASS
+V12 4 sigma at X=1e4 = 4.580                               |                 4.5800 |                  4.580 |      0.001 | PASS
+V12 IS estimate (seed 19, N=2000)                          |             1.8753e-06 |              1.880e-06 |       0.01 | PASS
+V12 IS std err                                             |             8.8898e-08 |              9.000e-08 |       0.05 | PASS
+    [V12 done in 23.3s]
+
+total 1086.5s
+
+====================================================================================================
+ALL PASS (578/578)   [total runtime 1086.5s]
