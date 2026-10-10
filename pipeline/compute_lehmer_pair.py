@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """compute_lehmer_pair.py -- exact log|P_X| and kernel sums at the midpoint of
-Lehmer's pair (gamma_6709, gamma_6710), Appendix B, Table B.2.
+Lehmer's pair (gamma_6709, gamma_6710), Appendix C, Table C.2.
 Writes data/lehmer_pair_7005.npz (gamma (2,), logP (6,), zsum (3, 6) for Delta = 100, 1000, 3000)."""
 import os
 import sys

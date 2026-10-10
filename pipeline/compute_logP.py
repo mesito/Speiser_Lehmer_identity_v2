@@ -2,7 +2,7 @@
 """compute_logP.py -- exact log|P_X(1/2+it0)| (GHK convention, all prime powers
 p^k <= X, X = 1e2..1e7) and the kernel sums S_Delta(t0; X) (Delta = 100, 1000)
 at the midpoints of every tight pair of the primary and the 2M ensembles and at
-the 300 control mid-gaps of the primary ensemble (Sections 5.2-5.4, 6.3).
+the 300 control mid-gaps of the primary ensemble (Sections 5 and 6).
 
 Writes data/logP_pairs_8p4e9.npy (2736 x 6), data/zsum_pairs_8p4e9.npy (2 x 2736 x 6),
 data/logP_ctrl_8p4e9.npy (300 x 6), data/ctrl_idx_8p4e9.npy, data/logP_pairs_2M.npy,

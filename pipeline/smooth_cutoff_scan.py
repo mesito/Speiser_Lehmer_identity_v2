@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """smooth_cutoff_scan.py -- the Euler regression with smooth prime cutoffs
-(Section 5.2 of the paper), on the full primary ensemble.
+(Section 5.4 and Table 5.2 of the paper), on the full primary ensemble.
 
 For every tight pair of the primary ensemble and every cutoff X in
 {1e2, ..., 1e7} the prime sum

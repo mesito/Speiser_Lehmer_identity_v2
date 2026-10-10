@@ -7,7 +7,7 @@ from tightpairs.report import close, rel, equal, below, info, section
 
 
 def run(ctx):
-    section("V2: the identity, Table 3.1; self-calibration, Observation 3.11")
+    section("V2: the identity, Table 3.1; self-calibration, Observation 3.4")
     ti = ctx.table("tab_identity")
     names = {"100k": "100k", "2M": "2M", "8p4e9": "LMFDB", "1e12": "1e12", "1e21": "1e21"}
     for k, a in ctx.rows.items():
@@ -25,6 +25,15 @@ def run(ctx):
     sub = np.arange(len(ctx.idx8)) if ctx.full else np.sort(ctx.rng.choice(len(ctx.idx8), 60, replace=False))
     fresh = G.rows_table(ctx.zl, ctx.idx8[sub], W)
     below("V2 lehmer_rows_8p4e9 recomputed on %d pairs, max rel dev" % len(sub), float(np.max(np.abs(fresh[:, 1:] / r8[sub, 1:] - 1))), 1e-12)
+    # the window rows recomputed from the raw tables (pipeline/compute_windows.py)
+    import importlib.util, os
+    spec = importlib.util.spec_from_file_location("compute_windows", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pipeline", "compute_windows.py"))
+    cw = importlib.util.module_from_spec(spec); spec.loader.exec_module(cw)
+    for ens, name in (("1e12", "zeros3"), ("1e21", "zeros4")):
+        _, _, _, fresh_w = cw.window_rows(name)
+        below("V2 lehmer_rows_%s recomputed from %s, max rel dev" % (ens, name), float(np.max(np.abs(fresh_w / ctx.rows[ens] - 1))), 1e-14)
+    for ens, tg in (("2M", None), ("100k", None)):
+        info("V2 median r %s" % ens, float(np.median(ctx.rows[ens][:, -1])), "%.4f")
     rr, Cmid = r8[:, -1], r8[:, 7]
     close("V2 min r (0.9612)", rr.min(), 0.9612, 5e-4, "%.6f")
     close("V2 median r (0.9981)", np.median(rr), 0.9981, 5e-4, "%.6f")
@@ -39,14 +48,16 @@ def run(ctx):
     sk = g8 / (2 * np.minimum(dprev, dnext))
     close("V2 median sqrt(kappa) (0.050)", np.median(sk), 0.050, 0.002, "%.4f", "%.3f")
     close("V2 max sqrt(kappa) (0.399)", sk.max(), 0.399, 0.002, "%.4f", "%.3f")
-    # self-calibration constant (Corollary 3.7)
+    # self-calibration constant (Corollary A.3)
     s8 = r8[:, 3]
     x = (1 - rr) / s8 ** 2
     close("V2 mean (1-r)/s^2 (0.156)", x.mean(), 0.156, 1e-3, "%.4f", "%.3f")
     phi = r8[:, 5] / dens(r8[:, 1]) ** 2
     close("V2 mean(far/dens^2)/16 (0.156)", phi.mean() / 16, 0.156, 1e-3, "%.4f", "%.3f")
+    close("V2 the far-field constant 2.501 equals Table 7.1", phi.mean(), ctx.table("tab_farlaw")["LMFDB"]["ratio"], 1e-12, "%.4f", "%.4f")
+    close("V2 far-field constant (2.501)", phi.mean(), 2.501, 5e-4, "%.4f", "%.3f")
     close("V2 pi^2/60", np.pi ** 2 / 60, 0.1645, 1e-4, "%.4f", "%.4f")
-    # the flip depth of Proposition 3.8: (x-1)/(1+x)^2 = 1/(16 C_mid)
+    # the flip depth of Proposition A.4: (x-1)/(1+x)^2 = 1/(16 C_mid)
     y = 1 / (16 * Cmid)
     a_, b_, c_ = y, 2 * y - 1, y + 1
     xf = (-b_ - np.sqrt(b_ * b_ - 4 * a_ * c_)) / (2 * a_)
@@ -55,7 +66,7 @@ def run(ctx):
     close("V2 median h_flip/eps (1.0039)", np.median(hf), 1.0039, 2e-4, "%.5f", "%.4f")
     below("V2 max |h_flip/eps - 1 - 1/(8 C_mid)| / C_mid^-2", float(np.max(np.abs(hf - 1 - 1 / (8 * Cmid)) * Cmid ** 2)), 0.1)
     below("V2 max |h_thr/eps - 1 + 1/(16 C_mid)| / C_mid^-2", float(np.max(np.abs(rr - 1 + 1 / (16 * Cmid)) * Cmid ** 2)), 0.1)
-    # Corollary 3.6: Lehmer condition C > 5/4 <=> r > sqrt(20/21) up to eta
+    # Corollary A.2: Lehmer condition C > 5/4 <=> r > sqrt(20/21) up to eta
     C_ = r8[:, 6]
     lehmer = C_ > 1.25
     equal("V2 Lehmer pairs (C > 5/4) have r > sqrt(20/21)", bool(np.all(rr[lehmer] > np.sqrt(20 / 21))), True)

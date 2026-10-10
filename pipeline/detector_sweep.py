@@ -7,7 +7,7 @@ of every tight pair of the primary ensemble:
 sampled at 257 interior points per pair, W = 250 ordinates on each side
 (clipped at the ensemble edges), all ordinate arithmetic in 80-bit precision.
 Also records far, S_on, h_thr, r, H = sqrt(2/far) and H/(g/2).  Writes
-data/detector_sweep_8p4e9.csv.  Proposition 3.12 shows that no pair with
+data/detector_sweep_8p4e9.csv.  Proposition 3.5 shows that no pair with
 C_mid > (8(1-sqrt(kappa))^2)^{-1} can show a non-negative value; the sweep is a
 test of the implementation.  Runtime about two minutes.
 """

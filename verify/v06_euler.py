@@ -1,4 +1,4 @@
-"""V6 -- Delta_0(X) (Lemma 5.2), the Euler regression (Observation 5.3, Table 5.1),
+"""V6 -- Delta_0(X) (Lemma 9.1), the Euler regression (Observation 5.1, Table 5.1),
 smooth cutoffs (Table 5.2), the variance ladder."""
 import time
 
@@ -14,7 +14,7 @@ def _cmp3(name, got, tg, tol=5e-4):
 
 
 def run(ctx):
-    section("V6: harmonic truncation, Euler regression, smooth cutoffs (Section 5.2)")
+    section("V6: harmonic truncation, Euler regression, smooth cutoffs (Sections 5.2-5.4)")
     pr = E.Primes(10 ** 7)
     term = E.Delta0_terms(pr)
     for X, tgt in ((10 ** 2, 0.2381784258), (10 ** 7, 0.2386607628)):

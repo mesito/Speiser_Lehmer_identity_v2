@@ -15,6 +15,11 @@ def run(ctx):
     close("V5 median rel. err. (%) (0.36)", np.median(ref["abs_rel_err_pct"]), 0.36, 0.01, "%.3f", "%.2f")
     close("V5 max rel. err. (%) (7.5)", ref["abs_rel_err_pct"].max(), 7.52, 0.01, "%.2f", "%.2f")
     equal("V5 signs agree on all 15 pairs", bool(np.all(np.sign(ref["delta"]) == np.sign(ref["prediction"]))), True)
+    ok = len(td["rows"]) == int(ref.size) and all(
+        abs(r_["delta"] - float(ref["delta"][k])) <= 1e-12 * abs(r_["delta"]) + 1e-20 and abs(r_["prediction"] - float(ref["prediction"][k])) <= 1e-12 * abs(r_["prediction"]) + 1e-20
+        and abs(r_["lambda_far"] - float(ref["lambda_far"][k])) <= 1e-11 for k, r_ in enumerate(td["rows"]))
+    report("V5 Table B.2 rows equal the reference file", "%d rows" % len(td["rows"]), "%d rows" % int(ref.size), 1e-12, ok, "%s", "%s")
+    close("V5 Table B.2 correlation", float(np.corrcoef(ref["delta"], ref["prediction"])[0, 1]), td["corr"], 1e-12, "%.8f", "%.8f")
     k = int(np.argmax(ref["abs_rel_err_pct"]))
     equal("V5 max error at the pair with the smallest |delta|", int(np.argmin(np.abs(ref["delta"]))), k)
     equal("V5 ... which has the smallest |lambda_far|", int(np.argmin(np.abs(ref["lambda_far"]))), k)

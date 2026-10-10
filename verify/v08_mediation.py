@@ -5,27 +5,48 @@ import mpmath as mp
 
 from tightpairs import data as D, euler as E, stats as S, instrument as I
 from tightpairs.constants import XS
-from tightpairs.report import close, report, below, equal, section
+from tightpairs.report import close, rel, report, below, equal, section
 
 
 def run(ctx):
-    section("V8: mediation (Section 6, Tables 6.1-6.2)")
-    for name, ff, tg in (("8.4e9", ctx.f8, -0.725), ("2M", ctx.f2, -0.498)):
+    section("V8: mediation (Section 6, Tables 6.1-6.3)")
+    tk = ctx.table("tab_k5")
+    f100 = ctx.arr("floors_all_100k.npy")
+    f12 = ctx.arr("floors_1e12.npy")
+    for name, ff in (("100k", f100), ("2M", ctx.f2), ("8p4e9", ctx.f8), ("1e12", f12)):
         (_, _), _, _, rg = S.ols(np.log(ff[:, 2])[:, None], np.log(ff[:, 5]))
-        close("V8 corr(resid_g, log far) %s" % name, S.corr(rg, np.log(ff[:, 4])), tg, 5e-3, "%.3f", "%.3f")
-    # 100k: floors of its 261 pairs with the reference instrument
-    rw = ctx.rows["100k"]
+        close("V8 K5 = corr(resid_g, log far) %s (Table 6.1)" % name, S.corr(rg, np.log(ff[:, 4])), tk[name]["K5"], 1e-12, "%.4f", "%.4f")
+    close("V8 K5 8.4e9 (-0.725)", tk["8p4e9"]["K5"], -0.725, 5e-4, "%.4f", "%.3f")
+    equal("V8 100k tight pairs", int(len(f100)), 261)
+    equal("V8 1e12 tight pairs with floors", int(len(f12)), 38)
+    below("V8 100k floors file: geometry equals lehmer_rows_100k", float(np.max(np.abs(f100[:, [0, 1, 2, 3, 5 - 1]] - ctx.rows["100k"][:, [0, 1, 2, 3, 5]]))), 1e-9)
+    below("V8 1e12 floors file: geometry equals lehmer_rows_1e12", float(np.max(np.abs(f12[:, [0, 1, 2, 3, 4]] - ctx.rows["1e12"][:, [0, 1, 2, 3, 5]]))), 1e-9)
     mp.mp.dps = 30
-    fl100 = np.array([I.floor_max_dd(mp.mpf(float(ctx.z1[int(r[0]) - 1])), mp.mpf(float(ctx.z1[int(r[0])])), mp)[0] for r in rw])
-    (_, _), _, _, rg = S.ols(np.log(rw[:, 2])[:, None], np.log(fl100))
-    equal("V8 100k tight pairs", int(len(rw)), 261)
-    close("V8 corr(resid_g, log far) 100k (-0.36)", S.corr(rg, np.log(rw[:, 5])), -0.36, 5e-3, "%.3f", "%.2f")
+    sel100 = range(len(f100)) if ctx.full else ctx.rng.choice(len(f100), 5, replace=False)
+    worst = 0.0
+    for k in sel100:
+        i = int(f100[k, 0]) - 1
+        f, _ = I.floor_max_dd(mp.mpf(float(ctx.z1[i])), mp.mpf(float(ctx.z1[i + 1])), mp)
+        worst = max(worst, abs(f / f100[k, 5] - 1))
+    below("V8 100k floors recomputed (%d), max rel dev" % len(list(sel100)), worst, 1e-10)
+    if ctx.full:
+        mp.mp.dps = 40
+        b3, off3 = D.load_window("zeros3")
+        k = int(np.argmin(f12[:, 5]))
+        i = int(f12[k, 0]) - 1
+        f, _ = I.floor_max_dd(mp.mpf(b3) + mp.mpf(repr(float(off3[i]))), mp.mpf(b3) + mp.mpf(repr(float(off3[i + 1]))), mp)
+        rel("V8 smallest 1e12 floor recomputed", f, f12[k, 5], 1e-10)
     lg8, lf8, far8 = np.log(ctx.f8[:, 2]), np.log(ctx.f8[:, 5]), ctx.f8[:, 4]
     (_, _), _, _, resg8 = S.ols(lg8[:, None], lf8)
     for j, X, tg in ((2, 1e4, (0.921, 0.048, -0.799)), (5, 1e7, (0.939, 0.053, -0.720))):
         close("V8 partial corr(resid, logP | far) X=1e%d" % int(np.log10(X)), S.partial_corr(resg8, ctx.lp8[:, j], far8), tg[0], 1e-3, "%.3f", "%.3f")
         close("V8 partial corr(resid, far | logP) X=1e%d" % int(np.log10(X)), S.partial_corr(resg8, far8, ctx.lp8[:, j]), tg[1], 1e-3, "%.3f", "%.3f")
         close("V8 corr(logP, log far) X=1e%d" % int(np.log10(X)), S.corr(ctx.lp8[:, j], np.log(far8)), tg[2], 1e-3, "%.3f", "%.3f")
+    sub = D.rank_subsample(ctx.f8[:, 2], 300)
+    (_, _), _, _, resg_s = S.ols(lg8[sub][:, None], lf8[sub])
+    ts_ = ctx.table("tab_sub")
+    close("V8 subsample partial corr(resid, logP | far) X=1e4", S.partial_corr(resg_s, ctx.lp8[sub, 2], far8[sub]), ts_["pcorr_sub_P_given_far"], 1e-12, "%.3f", "%.3f")
+    close("V8 subsample partial corr(resid, far | logP) X=1e4", S.partial_corr(resg_s, far8[sub], ctx.lp8[sub, 2]), ts_["pcorr_sub_far_given_P"], 1e-12, "%.3f", "%.3f")
     close("V8 2M corr(logP, log far) X=1e4 (-0.426)", S.corr(ctx.lp2[:, 2], np.log(ctx.f2[:, 4])), -0.426, 1e-3, "%.3f", "%.3f")
     tf = ctx.table("tab_fits")["ladder_1e4"]
     report("V8 adding far to (g, logP) at X=1e4: R2 0.9407 -> 0.9419", "%.4f -> %.4f" % (tf["g_logP"], tf["g_logP_far"]), "0.9407 -> 0.9419", 5e-4,
@@ -39,7 +60,7 @@ def run(ctx):
         sh = (mp_ - mc_) / sd_
         tg = tdf[str(int(X))]
         ok = abs(mp_ - tg["mean_pairs"]) <= 1e-9 and abs(mc_ - tg["mean_ctrl"]) <= 1e-9 and abs(sd_ - tg["sd_ctrl"]) <= 1e-9 and abs(sh - tg["shift"]) <= 1e-9
-        report("V8 deficit X=1e%d means/sd/shift (Table 6.1)" % int(np.log10(X)), "%.3f/%.3f/%.3f/%.2f" % (mp_, mc_, sd_, sh),
+        report("V8 deficit X=1e%d means/sd/shift (Table 6.2)" % int(np.log10(X)), "%.3f/%.3f/%.3f/%.2f" % (mp_, mc_, sd_, sh),
                "%.3f/%.3f/%.3f/%.2f" % (tg["mean_pairs"], tg["mean_ctrl"], tg["sd_ctrl"], tg["shift"]), 1e-9, ok)
     close("V8 shift at X=1e2 (-0.48)", tdf["100"]["shift"], -0.48, 0.01, "%.3f", "%.2f")
     close("V8 shift at X=1e7 (-3.88)", tdf["10000000"]["shift"], -3.88, 0.01, "%.3f", "%.2f")
@@ -74,7 +95,7 @@ def run(ctx):
         pc = S.partial_corr(lfb, Lb, lgb)
         tg = tb[str(B)]
         ok = all(abs(x - y) <= 1e-9 for x, y in ((aa, tg["a"]), (bb, tg["b"]), (se[1], tg["se_b"]), (r2, tg["R2"]), (pc, tg["pcorr"]), (Lb.std(), tg["sd_logP"])))
-        report("V8 blocks B=%d a/b/se/R2/pcorr/sd (Table 6.2)" % B, "%.3f/%.3f/%.3f/%.4f/%.3f/%.3f" % (aa, bb, se[1], r2, pc, Lb.std()),
+        report("V8 blocks B=%d a/b/se/R2/pcorr/sd (Table 6.3)" % B, "%.3f/%.3f/%.3f/%.4f/%.3f/%.3f" % (aa, bb, se[1], r2, pc, Lb.std()),
                "%.3f/%.3f/%.3f/%.4f/%.3f/%.3f" % (tg["a"], tg["b"], tg["se_b"], tg["R2"], tg["pcorr"], tg["sd_logP"]), 1e-9, ok)
         report("V8 blocks B=%d corr(logF,logP), corr(logP,logg)" % B, "%.3f/%.3f" % (tg["corr_logF_logP"], tg["corr_logP_logg"]), "[0.92,0.95]/-", "-",
                0.915 <= tg["corr_logF_logP"] <= 0.955, "%s", "%s")

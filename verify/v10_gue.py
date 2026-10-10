@@ -1,4 +1,4 @@
-"""V10 -- Theorem 7.2 (the GUE far-field constant) and Observation 7.3."""
+"""V10 -- Theorem E (the GUE far-field constant), Observation 7.2, the reference row of Table 7.3."""
 import numpy as np
 
 from tightpairs import gue as GU, data as D
@@ -6,7 +6,7 @@ from tightpairs.report import close, rel, below, report, section
 
 
 def run(ctx):
-    section("V10: the GUE far-field constant (Theorem 7.2, Observation 7.3)")
+    section("V10: the GUE far-field constant (Theorem E, Observation 7.2)")
     I1, I2, CG = GU.integrals()
     close("V10 int (1-S^2)/x^2 = 2pi^2/3", I1, 2 * np.pi ** 2 / 3, 1e-5, "%.7f", "%.7f")
     close("V10 int S'^2/x^2 = 2pi^4/15", I2, 2 * np.pi ** 4 / 15, 1e-5, "%.7f", "%.7f")
@@ -25,6 +25,14 @@ def run(ctx):
     close("V10 population prediction (2.610)", float(np.mean(np.interp(r8[:, 3], sg, Cg))) - 2 / 250, 2.610, 2e-3, "%.4f", "%.3f")
     close("V10 window law int_{|x|<=100} = C - 2/100", GU.window_integral(100.0), GU.C_GUE - 0.02, 2e-4, "%.5f", "%.5f")
     close("V10 pi^2/4 differs from C_GUE by 6.7%", 100 * (GU.C_GUE / (np.pi ** 2 / 4) - 1), 6.7, 0.05, "%.2f", "%.1f")
+    # the exact small-gap tail of the sine process (Table 7.3, reference row)
+    tgu = ctx.table("tab_gue")["sine_kernel"]
+    for s0, tg, k in ((0.05, 0.998, 0), (0.10, 0.992, 1), (0.15, 0.982, 2)):
+        ex = GU.tail_ratio_exact(s0)
+        close("V10 sine-kernel tail ratio s0=%.2f, Fredholm determinant (%.3f)" % (s0, tg), ex, tg, 5e-4, "%.5f", "%.3f")
+        below("V10 ... Fredholm determinant vs series 1 - 18pi^2 s^2/225 + 9pi^4 s^4/2205 (<= 4e-6)", abs(ex - GU.tail_ratio_series(s0)), 4e-6)
+        close("V10 ... equals Table 7.3", ex, tgu["tail_ratios"][k], 1e-12, "%.6f", "%.6f")
+    rel("V10 E_2(0;s) stable under doubling the nodes, s=0.15", GU.gap_probability(0.15, 80), GU.gap_probability(0.15, 40), 1e-14, "%.15f", "%.15f")
     # Monte-Carlo results
     try:
         mc = ctx.arr("gue_mc_summary.npz")
@@ -42,9 +50,15 @@ def run(ctx):
         close("V10 MC increment 25->50 (+0.0400)", float(mc["N500_w50_mean"] - mc["N500_w25_mean"]), 0.04, 0.01, "%.4f", "%.4f")
         close("V10 MC increment 50->100 (+0.0200)", float(mc["N500_w100_mean"] - mc["N500_w50_mean"]), 0.02, 0.01, "%.4f", "%.4f")
         close("V10 MC total conditioned pairs (138,619)", float(mc["total_pairs"]), 138619.0, 0.0, "%.0f", "%.0f")
-        close("V10 MC tail ratio s0=0.10 (1.03)", float(mc["tail_010"]), 1.03, 0.01, "%.3f", "%.2f")
-        close("V10 MC tail ratio s0=0.15 (1.00)", float(mc["tail_015"]), 1.00, 0.01, "%.3f", "%.2f")
-        close("V10 MC lag-1 (-0.304)", float(mc["lag1"]), -0.304, 0.002, "%.4f", "%.3f")
+        # bulk spacings of the N=500 matrices against the exact sine-kernel tail (Section 7.4)
+        for s0, key, tg in ((0.05, "tail_005", (1.08, 0.04)), (0.10, "tail_010", (1.03, 0.01)), (0.15, "tail_015", (0.995, 0.008))):
+            v, se_ = float(mc[key]), float(mc[key + "_se"])
+            report("V10 MC tail ratio s0=%.2f +- Poisson s.e. (%.3g +- %.2g)" % (s0, tg[0], tg[1]), "%.4f +- %.4f" % (v, se_), "%.3g +- %.2g" % tg, 5e-3,
+                   abs(v - tg[0]) <= 5e-3 and abs(se_ - tg[1]) <= 5e-3, "%s", "%s")
+            below("V10 ... MC within 2.4 s.e. of the exact value, s0=%.2f" % s0, abs(v - GU.tail_ratio_exact(s0)) / se_, 2.45, "%.2f")
+        close("V10 MC bulk spacings (4.5e6)", float(mc["n_bulk_spacings"]), 4.5e6, 1e4, "%.0f", "%.2g")
+        close("V10 MC lag-1, consecutive bulk spacings of the same matrix (-0.308)", float(mc["lag1"]), -0.308, 5e-4, "%.4f", "%.3f")
+        close("V10 MC lag-1 equals Table 7.3", float(mc["lag1"]), ctx.table("tab_gue")["GUE_MC"]["lag1"], 1e-12, "%.4f", "%.4f")
     except FileNotFoundError:
         report("V10 MC summary file missing (run pipeline/gue_mc.py)", "missing", "present", "-", False, "%s", "%s")
     if ctx.full:
@@ -52,10 +66,10 @@ def run(ctx):
         for w, v in res["sums"].items():
             rel("V10 MC quick tier C_GUE (N=200, window %d, +2/w)" % int(w), float(v.mean()) + 2.0 / w, GU.C_GUE, 0.03, "%.4f", "%.4f")
         L = res["lag"]
-        close("V10 MC quick tier lag-1 (-0.304)", np.corrcoef(L[:, 0], L[:, 1])[0, 1], -0.304, 0.01, "%.3f", "%.3f")
+        close("V10 MC quick tier lag-1 (-0.308)", np.corrcoef(L[:, 0], L[:, 1])[0, 1], -0.308, 0.01, "%.3f", "%.3f")
         sb = res["tails"]
         C9 = np.pi ** 2 / 9
-        for s0, tg in ((0.10, 1.03), (0.15, 1.00)):
-            close("V10 MC quick tier tail ratio s0=%.2f" % s0, float(np.mean(sb < s0)) / (C9 * s0 ** 3), tg, 0.06, "%.3f", "%.2f")
+        for s0 in (0.10, 0.15):
+            close("V10 MC quick tier tail ratio s0=%.2f vs exact" % s0, float(np.mean(sb < s0)) / (C9 * s0 ** 3), GU.tail_ratio_exact(s0), 0.08, "%.3f", "%.3f")
     else:
         print("    (GUE Monte-Carlo quick tier skipped; use --full)")

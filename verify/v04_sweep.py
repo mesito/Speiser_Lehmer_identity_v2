@@ -1,4 +1,4 @@
-"""V4 -- the detector on certified pairs (Section 3.6, Proposition 3.12)."""
+"""V4 -- the detector on certified pairs (Section 3.6, Proposition 3.5)."""
 import numpy as np
 
 from tightpairs import geometry as G
@@ -18,6 +18,15 @@ def run(ctx):
     hr = det["H"] / (det["g"] / 2.0)
     close("V4 min H/(g/2) (3.49)", hr.min(), 3.49, 0.01, "%.3f", "%.2f")
     close("V4 median H/(g/2) (16.0)", np.median(hr), 16.0, 0.05, "%.2f", "%.1f")
+    tsw = ctx.table("tab_sweep")
+    equal("V4 Table C.1: sign changes", tsw["sign_changes"], 0)
+    report("V4 Table C.1: r min/median/max", "/".join("%.6f" % v for v in (det["r"].min(), np.median(det["r"]), det["r"].max())),
+           "/".join("%.6f" % v for v in tsw["r"]), 1e-12, all(abs(a - b) <= 1e-12 for a, b in zip((det["r"].min(), np.median(det["r"]), det["r"].max()), tsw["r"])))
+    report("V4 Table C.1: H/(g/2) min/median/max", "/".join("%.3f" % v for v in (hr.min(), np.median(hr), hr.max())),
+           "/".join("%.3f" % v for v in tsw["H_rel"]), "rel 1e-8", all(abs(a - b) <= 1e-8 * abs(b) for a, b in zip((hr.min(), np.median(hr), hr.max()), tsw["H_rel"])))
+    close("V4 text: r min/median/max (0.961224/0.998054/0.999975)", np.sum(np.abs(np.array(tsw["r"]) - (0.961224, 0.998054, 0.999975))), 0.0, 3e-6, "%.2e", "%.0f")
+    below("V4 pair term -8/g^2 <= -3.97e3 on every pair", tsw["max_pair_term"], -3.97e3, "%.1f")
+    report("V4 far at the midpoints in [13, 369]", "%.2f..%.2f" % (tsw["far"][0], tsw["far"][2]), "[13,369]", "-", 13 <= tsw["far"][0] and tsw["far"][2] <= 369, "%s", "%s")
     # condition (3.23)
     r8 = ctx.rows["8p4e9"]
     zl, idx8 = ctx.zl, ctx.idx8

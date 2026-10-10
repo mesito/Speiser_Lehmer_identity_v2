@@ -9,10 +9,11 @@ the gap endpoints are the exact (double-double) ordinates.
 Writes
   data/floors_all_8p4e9.npy   (idx 1-based, t0, g, s, far, floor)   2736 pairs, W = 250
   data/floors_all_2M.npy      (idx 1-based, t0, g, s, far, floor)   6088 pairs
+  data/floors_all_100k.npy    (idx 1-based, t0, g, s, far, floor)   261 pairs
   data/floors_ctrl_8p4e9.npy  (idx 1-based, g, floor)               300 control mid-gaps
   data/lehmer_rows_<ens>.npy  (idx 1-based, t0, g, s, S_on, far, C, C_mid, h_thr, r)
-                              for ens = 100k, 2M, 8p4e9 (the 1e12 and 1e21 windows
-                              need zeros3/zeros4, see README)
+                              for ens = 100k, 2M, 8p4e9 (the windows at 1e12 and
+                              1e21: pipeline/compute_windows.py)
 Runtime: about 15 minutes (primary), 10 minutes (2M) on one core.
 """
 import os
@@ -70,12 +71,9 @@ def main(which=("8p4e9", "2M", "100k", "ctrl")):
         hl = np.column_stack([z, np.zeros_like(z)])
         idx = D.tight_pairs(z)
         np.save(D.path("lehmer_rows_%s.npy" % ens), G.rows_table(zl, idx, W))
-        if ens == "2M":
-            fa = floors_for(zl, hl, idx, ens)
-            np.save(D.path("floors_all_2M.npy"), fa)
-            print("2M: %d pairs, smallest floor %.4e (%.0fs)" % (len(idx), fa[:, 5].min(), time.time() - t), flush=True)
-        else:
-            print("100k: %d pairs (%.0fs)" % (len(idx), time.time() - t), flush=True)
+        fa = floors_for(zl, hl, idx, ens)
+        np.save(D.path("floors_all_%s.npy" % ens), fa)
+        print("%s: %d pairs, smallest floor %.4e (%.0fs)" % (ens, len(idx), fa[:, 5].min(), time.time() - t), flush=True)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 """make_figures.py -- regenerates the five figures of the paper from the data
 shipped in data/ (no hard-coded numbers).  Output goes to ../paper/figs/.
 
-  fig_4_1_displacement_scatter.png   Figure 4.1  (reference_8p4e9.csv)
+  fig_4_1_displacement_scatter.png   Figure 4.1  (reference_8p4e9.csv, reference_8p4e9_sub.csv)
   fig_5_1_euler_loading.png          Figure 5.1  (floors_all_*, logP_pairs_*)
   fig_5_2_decomposition.png          Figure 5.2  (floors_all_8p4e9, logP_pairs_8p4e9, zsum_pairs_8p4e9)
   fig_6_1_euler_deficit.png          Figure 6.1  (logP_pairs_8p4e9, logP_ctrl_8p4e9)
@@ -12,6 +12,7 @@ import os
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.ticker
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -31,14 +32,21 @@ def ols(Xm, y):
 
 # ------------------------------------------------------------ Figure 4.1
 d = np.genfromtxt(os.path.join(DATA, "reference_8p4e9.csv"), delimiter=",", names=True)
-fig, ax = plt.subplots(figsize=(6.2, 4.6))
-lim = 1.1 * max(np.abs(d["delta"]).max(), np.abs(d["prediction"]).max())
-ax.plot([-lim, lim], [-lim, lim], "k--", lw=0.8, label="$y=x$")
-ax.scatter(d["prediction"], d["delta"], s=28, zorder=3)
+ds = np.genfromtxt(os.path.join(DATA, "reference_8p4e9_sub.csv"), delimiter=",", names=True)
+fig, ax = plt.subplots(figsize=(6.2, 5.0))
+lim = 1.4 * max(np.abs(d["delta"]).max(), np.abs(ds["delta"]).max(), np.abs(d["prediction"]).max(), np.abs(ds["prediction"]).max())
+xx = np.concatenate([-np.logspace(np.log10(lim), -9, 200), np.logspace(-9, np.log10(lim), 200)])
+ax.plot(xx, xx, "k--", lw=0.8, label="$y=x$")
+ax.scatter(d["prediction"], d["delta"], s=30, marker="o", zorder=3, label="15 tightest pairs")
+ax.scatter(ds["prediction"], ds["delta"], s=34, marker="s", facecolors="none", edgecolors="C1", zorder=3, label="rank subsample, first 15")
+ax.set_xscale("symlog", linthresh=1e-7)
+ax.set_yscale("symlog", linthresh=1e-7)
+ax.set_xlim(-lim, lim)
+ax.set_ylim(-lim, lim)
 ax.set_xlabel(r"prediction $(g^2/8)\,\lambda_{\mathrm{far}}$")
 ax.set_ylabel(r"measured displacement $\delta$")
-ax.set_title(r"Displacement law, 15 tightest pairs at $t\approx8.436\times10^{9}$")
-ax.legend(loc="upper left")
+ax.set_title(r"Displacement law at $t\approx8.436\times10^{9}$")
+ax.legend(loc="upper left", fontsize=8)
 fig.tight_layout()
 fig.savefig(os.path.join(OUT, "fig_4_1_displacement_scatter.png"), dpi=180)
 plt.close(fig)
@@ -113,11 +121,15 @@ fig.savefig(os.path.join(OUT, "fig_6_1_euler_deficit.png"), dpi=180)
 plt.close(fig)
 
 # ------------------------------------------------------------ Figure 7.1
-dens = {"100k": 1.494, "2M": 1.935, "8p4e9": 3.3451, "1e12": 3.896, "1e21": 7.095}
+# x = mean of dens(t0)^2 over the tight pairs of each ensemble, dens evaluated at each pair's own
+# height (the window offsets are added to the base ordinates of the file headers); y = mean far field
+BASES = {"1e12": 267653395647, "1e21": 144176897509546973000}
 pts = []
-for k, dv in dens.items():
+for k in ("100k", "2M", "8p4e9", "1e12", "1e21"):
     a = np.load(os.path.join(DATA, "lehmer_rows_%s.npy" % k))
-    pts.append((dv ** 2, float(a[:, 5].mean()), k))
+    t0 = a[:, 1] + BASES.get(k, 0)
+    d2 = (np.log(t0 / (2 * np.pi)) / (2 * np.pi)) ** 2
+    pts.append((float(d2.mean()), float(a[:, 5].mean()), k))
 pts.sort()
 fig, ax = plt.subplots(figsize=(6.0, 4.4))
 xx = np.array([p[0] for p in pts])
@@ -125,11 +137,14 @@ yy = np.array([p[1] for p in pts])
 xs = np.logspace(np.log10(xx.min() / 1.5), np.log10(xx.max() * 1.5), 50)
 ax.plot(xs, 4 * np.pi ** 2 / 15 * xs, "k--", lw=0.9, label=r"$(4\pi^2/15)\,\mathrm{dens}^2$")
 ax.scatter(xx, yy, s=36, zorder=3)
+NAMES = {"100k": "100k", "2M": "2M", "8p4e9": "LMFDB", "1e12": r"$10^{12}$", "1e21": r"$10^{21}$"}
 for x0, y0, k in pts:
-    ax.annotate(k, (x0, y0), textcoords="offset points", xytext=(6, -10), fontsize=8)
+    ax.annotate(NAMES[k], (x0, y0), textcoords="offset points", xytext=(6, -10), fontsize=8)
 ax.set_xscale("log")
 ax.set_yscale("log")
-ax.set_xlabel(r"$\mathrm{dens}^2$")
+ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+ax.set_xlabel(r"mean of $\mathrm{dens}(t_0)^2$")
 ax.set_ylabel(r"mean far field of tight pairs")
 ax.legend(loc="upper left")
 fig.tight_layout()

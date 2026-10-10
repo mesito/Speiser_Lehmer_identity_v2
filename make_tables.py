@@ -25,12 +25,12 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from tightpairs import data as D, euler as E, kernel as K, stats as S, tails as T, geometry as G  # noqa: E402
+from tightpairs import data as D, euler as E, kernel as K, stats as S, tails as T, geometry as G, gue as GU  # noqa: E402
 from tightpairs.constants import XS, GAMMA_E, dens  # noqa: E402
 
 OUT = "tables"
-ENS = [("100k", "100k", r"Odlyzko 100k", r"$\approx7.5\times10^{4}$", 1.494),
-       ("2M", "2M", r"Odlyzko 2M", r"$\approx1.2\times10^{6}$", 1.935),
+ENS = [("100k", "100k", r"Odlyzko 100k", r"$\le7.5\times10^{4}$", 1.494),
+       ("2M", "2M", r"Odlyzko 2M", r"$\le1.13\times10^{6}$", 1.926),
        ("8p4e9", "LMFDB", r"LMFDB $8.4\times10^{9}$", r"$8.436\times10^{9}$", 3.3451),
        ("1e12", "1e12", r"$10^{12}$ window", r"$\approx2.7\times10^{11}$", 3.896),
        ("1e21", "1e21", r"$10^{21}$ window", r"$\approx1.4\times10^{20}$", 7.095)]
@@ -119,7 +119,7 @@ def tab_fits():
                     % (int(np.log10(X)), a1, sa1, b1, sb1, r1, a2, sa2, b2, sb2, r2))
         num["8p4e9"][str(int(X))] = {"a": a1, "se_a": sa1, "b": b1, "se_b": sb1, "R2": r1}
         num["2M"][str(int(X))] = {"a": a2, "se_a": sa2, "b": b2, "se_b": sb2, "R2": r2}
-    body = ("\\begin{tabular}{@{}c ccc c ccc@{}}\n\\toprule\n & \\multicolumn{3}{c}{$t\\approx8.436\\times10^{9}$} & & \\multicolumn{3}{c}{$t\\approx1.2\\times10^{6}$}\\\\\n"
+    body = ("\\begin{tabular}{@{}c ccc c ccc@{}}\n\\toprule\n & \\multicolumn{3}{c}{LMFDB, $t\\approx8.436\\times10^{9}$} & & \\multicolumn{3}{c}{2M, $t\\le1.13\\times10^{6}$}\\\\\n"
             "\\cmidrule{2-4}\\cmidrule{6-8}\n$X$ & $a$ & $b$ & $R^{2}$ & & $a$ & $b$ & $R^{2}$\\\\\n\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     # variance ladder at X = 1e4 and the g-only statistics
     lg, lf, far = np.log(f8[:, 2]), np.log(f8[:, 5]), f8[:, 4]
@@ -168,7 +168,7 @@ def tab_decomp():
         rows.append("$10^{%d}$ & " % int(np.log10(X)) + " & & ".join(cells) + "\\\\")
     num["2M_max_abs_median"] = max(abs(v["median"]) for v in num["2M"]["1000"].values())
     num["2M_max_sd"] = max(v["sd"] for v in num["2M"]["1000"].values())
-    # loading accounting (Observation 5.8)
+    # loading accounting (Observation 5.10)
     g8, lg8 = f8[:, 2], np.log(f8[:, 2]); far8 = f8[:, 4]
     acc = {}
     for j, X in enumerate(XS):
@@ -186,17 +186,24 @@ def tab_decomp():
 
 def tab_deficit():
     lp8 = np.load(D.path("logP_pairs_8p4e9.npy")); lpc = np.load(D.path("logP_ctrl_8p4e9.npy"))
+    f8 = np.load(D.path("floors_all_8p4e9.npy"))
+    sub = _sub_index(f8)
     rows, num = [], {}
     for j, X in enumerate(XS):
         mp_, mc_, sd_ = float(lp8[:, j].mean()), float(lpc[:, j].mean()), float(lpc[:, j].std(ddof=1))
         sh, fac = (mp_ - mc_) / sd_, float(np.exp(mc_ - mp_))
-        num[str(int(X))] = {"mean_pairs": mp_, "mean_ctrl": mc_, "sd_ctrl": sd_, "shift": sh, "factor": fac}
-        rows.append("$10^{%d}$ & $%.3f$ & $%.3f$ & $%.3f$ & $%+.2f\\sigma$ & $%.1f$\\\\" % (int(np.log10(X)), mp_, mc_, sd_, sh, fac))
+        ms_ = float(lp8[sub, j].mean())
+        shs, facs = (ms_ - mc_) / sd_, float(np.exp(mc_ - ms_))
+        num[str(int(X))] = {"mean_pairs": mp_, "mean_ctrl": mc_, "sd_ctrl": sd_, "shift": sh, "factor": fac,
+                            "mean_sub": ms_, "shift_sub": shs, "factor_sub": facs, "sd_pairs": float(lp8[:, j].std(ddof=1))}
+        rows.append("$10^{%d}$ & $%.3f$ & $%.3f$ & $%.3f$ & $%+.2f\\sigma$ & $%.1f$ & & $%.3f$ & $%+.2f\\sigma$ & $%.1f$\\\\"
+                    % (int(np.log10(X)), mp_, mc_, sd_, sh, fac, ms_, shs, facs))
     fc = np.load(D.path("floors_ctrl_8p4e9.npy")); yc = np.log(fc[:, 2])
     for j, X in ((2, 1e4), (5, 1e7)):
-        (m_, c_), _, _, _ = S.ols(lpc[:, j][:, None], yc)
-        num["ctrl_regression_1e%d" % int(np.log10(X))] = {"slope": m_, "intercept": c_, "corr": S.corr(lpc[:, j], yc)}
-    body = ("\\begin{tabular}{@{}cccccc@{}}\n\\toprule\n$X$ & mean at pairs & mean at controls & control s.d. & shift & $\\e^{-\\Delta}$\\\\\n\\midrule\n"
+        (m_, c_), _, r2_, _ = S.ols(lpc[:, j][:, None], yc)
+        num["ctrl_regression_1e%d" % int(np.log10(X))] = {"slope": m_, "intercept": c_, "corr": S.corr(lpc[:, j], yc), "R2": r2_}
+    body = ("\\begin{tabular}{@{}cccccc c ccc@{}}\n\\toprule\n & \\multicolumn{5}{c}{all $2{,}736$ pairs} & & \\multicolumn{3}{c}{rank subsample}\\\\\n"
+            "\\cmidrule(lr){2-6}\\cmidrule(lr){8-10}\n$X$ & mean, pairs & mean, controls & control s.d. & shift & $\\e^{-\\Delta}$ & & mean & shift & $\\e^{-\\Delta}$\\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     write("tab_deficit", body, num)
 
@@ -221,21 +228,36 @@ def tab_blocks():
     write("tab_blocks", body, num)
 
 
+BASES = {"1e12": 267653395647, "1e21": 144176897509546973000}
+
+
 def tab_farlaw():
+    """Table: the far-field law; far is normalised pair by pair with dens(t0)^2 at the pair's own height."""
     rows, num = [], {}
     xs_, ys_ = [], []
-    for key, short, label, height, dn in ENS:
+    for key, short, label, height, _ in ENS:
         a = np.load(D.path("lehmer_rows_%s.npy" % key))
-        mf = float(a[:, 5].mean())
-        num[short] = {"dens": dn, "dens2": dn ** 2, "mean_far": mf, "ratio": mf / dn ** 2, "n": int(len(a))}
-        xs_.append(dn ** 2); ys_.append(mf)
-        hl = {"100k": "$7.5\\times10^{4}$", "2M": "$1.2\\times10^{6}$", "LMFDB": "$8.436\\times10^{9}$", "1e12": "$2.68\\times10^{11}$", "1e21": "$1.44\\times10^{20}$"}[short]
+        t0 = a[:, 1] + BASES.get(key, 0)
+        d2 = dens(t0) ** 2
+        phi = a[:, 5] / d2
+        mf, md2 = float(a[:, 5].mean()), float(d2.mean())
+        num[short] = {"mean_dens2": md2, "mean_far": mf, "ratio": float(phi.mean()), "se_ratio": float(phi.std(ddof=1) / np.sqrt(len(phi))),
+                      "n": int(len(a)), "mean_log_t": float(np.mean(np.log(t0 / (2 * np.pi))))}
+        xs_.append(md2); ys_.append(mf)
         name = {"100k": "100k", "2M": "2M", "LMFDB": "LMFDB", "1e12": "$10^{12}$ window", "1e21": "$10^{21}$ window"}[short]
-        rows.append("%s & %s & %.3f & %.3f & %.2f & %.3f\\\\" % (name, hl, dn, dn ** 2, mf, mf / dn ** 2))
+        rows.append("%s & %d & %.3f & %.2f & $%.3f\\pm%.3f$\\\\" % (name, len(a), md2, mf, phi.mean(), num[short]["se_ratio"]))
     num["corr"] = S.corr(xs_, ys_)
+    # one-parameter finite-height correction C_pop (1 - c / log(t/2pi)), weighted least squares
+    C_pop = 2.610
+    y = np.array([num[k]["ratio"] for k in ("100k", "2M", "LMFDB", "1e12", "1e21")])
+    se = np.array([num[k]["se_ratio"] for k in ("100k", "2M", "LMFDB", "1e12", "1e21")])
+    L = np.array([num[k]["mean_log_t"] for k in ("100k", "2M", "LMFDB", "1e12", "1e21")])
+    w = 1 / se ** 2; xx = C_pop / L
+    c = float(np.sum(w * xx * (C_pop - y)) / np.sum(w * xx * xx))
+    num["logfit"] = {"C_pop": C_pop, "c": c, "chi2": float(np.sum(((y - C_pop * (1 - c / L)) / se) ** 2)), "dof": 4}
     a8 = np.load(D.path("lehmer_rows_8p4e9.npy"))
     num["far_8p4e9"] = {"median": float(np.median(a8[:, 5])), "mean": float(a8[:, 5].mean()), "max": float(a8[:, 5].max())}
-    body = ("\\begin{tabular}{@{}lccccc@{}}\n\\toprule\nensemble & $t$ & $\\dens$ & $\\dens^{2}$ & mean $\\far$ & $\\overline{\\far}/\\dens^{2}$\\\\\n\\midrule\n"
+    body = ("\\begin{tabular}{@{}lrccc@{}}\n\\toprule\nensemble & pairs & mean $\\dens(t_{0})^{2}$ & mean $\\far$ & mean $\\far/\\dens(t_{0})^{2}$\\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     write("tab_farlaw", body, num)
 
@@ -244,19 +266,31 @@ def tab_gue():
     C9 = np.pi ** 2 / 9.0
     S0 = (0.05, 0.10, 0.15)
     rows, num = [], {}
-    for name, loader in (("100k", lambda: D.load_odlyzko("zeros1")), ("2M", lambda: D.load_odlyzko("zeros6")), ("LMFDB $8.4\\times10^{9}$", lambda: D.load_parsed())):
+    for name, loader in (("100k", lambda: D.load_odlyzko("zeros1")), ("2M", lambda: D.load_odlyzko("zeros6")), ("LMFDB $8.4\\times10^{9}$", lambda: D.load_longdouble())):
         z = loader()
-        s = D.normalised_spacings(z)
+        s = D.local_spacings(z)
         rr = [float(np.mean(s < s0)) / (C9 * s0 ** 3) for s0 in S0]
         lag = S.corr(s[:-1], s[1:])
         key = name.split()[0]
-        num[key] = {"tail_ratios": rr, "lag1": lag}
+        num[key] = {"tail_ratios": rr, "counts": [int(np.sum(s < s0)) for s0 in S0], "n_spacings": int(len(s)), "lag1": lag}
         rows.append("%s & %.3f & %.3f & %.3f & $%.3f$\\\\" % (name, rr[0], rr[1], rr[2], lag))
+    for name, wname in (("$10^{12}$ window", "zeros3"), ("$10^{21}$ window", "zeros4")):
+        s, base, off = _window_spacings(wname)
+        cnt = [int(np.sum(s < s0)) for s0 in S0]
+        rr = [c / len(s) / (C9 * s0 ** 3) for c, s0 in zip(cnt, S0)]
+        lag = S.corr(s[:-1], s[1:])
+        key = "1e12" if wname == "zeros3" else "1e21"
+        num[key] = {"tail_ratios": rr, "counts": cnt, "n_spacings": int(len(s)), "lag1": lag, "mean_s": float(s.mean())}
+        rows.append("%s & %.2f (%d) & %.2f (%d) & %.2f (%d) & $%.3f$\\\\" % (name, rr[0], cnt[0], rr[1], cnt[1], rr[2], cnt[2], lag))
     m = np.load(D.path("gue_mc_summary.npz"))
-    ref = {"tail_010": float(m["tail_010"]), "tail_015": float(m["tail_015"]), "lag1": float(m["lag1"]),
+    ref = {"lag1": float(m["lag1"]), "lag1_npairs": int(m["lag1_npairs"]), "n_bulk_spacings": int(m["n_bulk_spacings"]),
            "N500_w100": float(m["N500_w100_mean"]), "N500_w100_se": float(m["N500_w100_se"]), "total_pairs": int(m["total_pairs"])}
+    for key in ("tail_005", "tail_010", "tail_015"):
+        ref[key], ref[key + "_se"], ref[key + "_count"] = float(m[key]), float(m[key + "_se"]), int(m[key + "_count"])
     num["GUE_MC"] = ref
-    rows.append("GUE Monte Carlo & --- & %.2f & %.2f & $%.3f$\\\\" % (ref["tail_010"], ref["tail_015"], ref["lag1"]))
+    exact = [GU.tail_ratio_exact(s0) for s0 in S0]
+    num["sine_kernel"] = {"tail_ratios": exact, "series": [float(GU.tail_ratio_series(s0)) for s0 in S0]}
+    rows.append("GUE (sine kernel) & %.3f & %.3f & %.3f & $%.3f$\\\\" % (exact[0], exact[1], exact[2], ref["lag1"]))
     body = ("\\begin{tabular}{@{}lcccc@{}}\n\\toprule\nensemble & ratio, $s_{0}=0.05$ & ratio, $s_{0}=0.10$ & ratio, $s_{0}=0.15$ & lag-1 corr.\\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     write("tab_gue", body, num)
@@ -311,7 +345,275 @@ def tab_lehmer():
     write("tab_lehmer", body, num)
 
 
-ALL = [tab_identity, tab_floorid, tab_fits, tab_smooth, tab_decomp, tab_deficit, tab_blocks, tab_farlaw, tab_gue, tab_chernoff, tab_disp, tab_lehmer]
+
+# ----------------------------------------------------------------- tables added with the rank subsample,
+# the proxy L_X^(3), the windows at 1e12 / 1e21 and the certificate
+def _fit(lg, L, lf):
+    (a, b, c), se, r2, res = S.ols(np.column_stack([lg, L]), lf)
+    return a, se[0], b, se[1], r2
+
+
+def _sub_index(f8):
+    """indices (into the 2,736 rows of floors_all_8p4e9) of the rank subsample of 300 pairs."""
+    return D.rank_subsample(f8[:, 2], 300)
+
+
+def tab_sub():
+    """Table: Euler regression on the full primary ensemble and on its 300-pair rank subsample."""
+    f8 = np.load(D.path("floors_all_8p4e9.npy")); lp8 = np.load(D.path("logP_pairs_8p4e9.npy"))
+    sub = _sub_index(f8)
+    lg, lf = np.log(f8[:, 2]), np.log(f8[:, 5])
+    rows, num = [], {"full": {}, "sub": {}}
+    for j, X in enumerate(XS):
+        A = _fit(lg, lp8[:, j], lf); B = _fit(lg[sub], lp8[sub, j], lf[sub])
+        num["full"][str(int(X))] = dict(zip(("a", "se_a", "b", "se_b", "R2"), A))
+        num["sub"][str(int(X))] = dict(zip(("a", "se_a", "b", "se_b", "R2"), B))
+        rows.append("$10^{%d}$ & $%.4f$ & $%.4f$ & $%.4f$ & & $%.4f\\,(%.4f)$ & $%.4f\\,(%.4f)$ & $%.4f$ & & $%+.3f$ & $%+.3f$\\\\"
+                    % (int(np.log10(X)), A[0], A[2], A[4], B[0], B[1], B[2], B[3], B[4], B[0] - A[0], B[2] - A[2]))
+    # the subsample itself and the gap-only statistics (Section 5.1)
+    order = np.argsort(f8[:, 2], kind="stable")
+    num["n_sub"] = int(len(sub)); num["first_is_tightest"] = bool(sub[0] == order[0])
+    num["sub_idx1"] = [int(f8[i, 0]) for i in sub[:15]]
+    num["sub_g_range"] = [float(f8[sub, 2].min()), float(f8[sub, 2].max())]
+    for key, ii in (("g_only_full", np.arange(len(f8))), ("g_only_sub", sub)):
+        (sl, c0), se, r2, res = S.ols(lg[ii][:, None], lf[ii])
+        num[key] = {"slope": float(sl), "se": float(se[0]), "corr": S.corr(lg[ii], lf[ii]),
+                    "resid_sd_nats": float(res.std()), "resid_sd_dex": float(res.std() / np.log(10))}
+    (_, _), _, _, rs = S.ols(lg[sub][:, None], lf[sub])
+    far = f8[:, 4]
+    num["pcorr_sub_P_given_far"] = S.partial_corr(rs, lp8[sub, 2], far[sub])
+    num["pcorr_sub_far_given_P"] = S.partial_corr(rs, far[sub], lp8[sub, 2])
+    f2 = np.load(D.path("floors_all_2M.npy")); lp2 = np.load(D.path("logP_pairs_2M.npy"))
+    sub2 = D.rank_subsample(f2[:, 2], 300)
+    lg2, lf2 = np.log(f2[:, 2]), np.log(f2[:, 5])
+    num["2M"] = {"full_1e4": dict(zip(("a", "se_a", "b", "se_b", "R2"), _fit(lg2, lp2[:, 2], lf2))),
+                 "sub_1e4": dict(zip(("a", "se_a", "b", "se_b", "R2"), _fit(lg2[sub2], lp2[sub2, 2], lf2[sub2])))}
+    body = ("\\begin{tabular}{@{}c ccc c ccc c cc@{}}\n\\toprule\n & \\multicolumn{3}{c}{full ensemble, $2{,}736$ pairs} & & \\multicolumn{3}{c}{rank subsample, $300$ pairs} & & \\multicolumn{2}{c}{difference}\\\\\n"
+            "\\cmidrule{2-4}\\cmidrule{6-8}\\cmidrule{10-11}\n$X$ & $a$ & $b$ & $R^{2}$ & & $a$ & $b$ & $R^{2}$ & & $\\Delta a$ & $\\Delta b$\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_sub", body, num)
+
+
+def tab_ladder():
+    """Table: the variance ladder, R^2 of log F on successive regressor sets, two ensembles, X = 1e4 and 1e7."""
+    sets = (("g", "$\\log g$"), ("g_far", "$\\log g,\\ \\log\\far$"), ("g_P", "$\\log g,\\ \\log|\\PX|$"), ("g_P_far", "$\\log g,\\ \\log|\\PX|,\\ \\log\\far$"))
+    num, cols = {}, []
+    for ens in ("8p4e9", "2M"):
+        fa = np.load(D.path("floors_all_%s.npy" % ens)); lp = np.load(D.path("logP_pairs_%s.npy" % ens))
+        lg, lf, lfar = np.log(fa[:, 2]), np.log(fa[:, 5]), np.log(fa[:, 4])
+        for j, X in ((2, 1e4), (5, 1e7)):
+            L = lp[:, j]
+            r = {"g": S.ols(lg[:, None], lf)[2], "g_far": S.ols(np.column_stack([lg, lfar]), lf)[2],
+                 "g_P": S.ols(np.column_stack([lg, L]), lf)[2], "g_P_far": S.ols(np.column_stack([lg, L, lfar]), lf)[2]}
+            num["%s_%s" % (ens, int(np.log10(X)))] = r
+            cols.append(r)
+    rows = []
+    for key, lab in sets:
+        rows.append(lab + " & " + " & ".join("$%.4f$" % c[key] for c in cols) + "\\\\")
+    body = ("\\begin{tabular}{@{}l cc cc@{}}\n\\toprule\n & \\multicolumn{2}{c}{LMFDB} & \\multicolumn{2}{c}{2M}\\\\\n"
+            "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\nregressors & $X=10^{4}$ & $X=10^{7}$ & $X=10^{4}$ & $X=10^{7}$\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_ladder", body, num)
+
+
+def tab_eiv():
+    """Table: errors in variables -- the regression on the proxy L_X^(3) against the regression on the exact
+    log|P_X|, and three reliabilities of the proxy."""
+    pr = E.Primes(10 ** 7)
+    num, rows = {}, []
+    for ens in ("8p4e9", "2M"):
+        fa = np.load(D.path("floors_all_%s.npy" % ens)); lp = np.load(D.path("logP_pairs_%s.npy" % ens)); l3 = np.load(D.path("LX3_pairs_%s.npy" % ens))
+        lg, lf = np.log(fa[:, 2]), np.log(fa[:, 5])
+        num[ens] = {}
+        for j, X in enumerate(XS):
+            x, w = lp[:, j], l3[:, j]
+            b = _fit(lg, x, lf)[2]; a3, _, b3, se3, r23 = _fit(lg, w, lf)
+            rx, rw = S.resid_on(x, lg[:, None]), S.resid_on(w, lg[:, None])
+            lam_meas = float(np.dot(rx, rw) / np.dot(rw, rw))
+            dX = E.delta_sup(X, pr)
+            lam_sup = float(1 - dX ** 2 / rw.var())
+            lam_r = E.lambda_rand(X, pr)
+            num[ens][str(int(X))] = {"b": b, "a3": a3, "b3": b3, "se_b3": se3, "R2_3": r23, "ratio": b3 / b, "lambda_meas": lam_meas,
+                                     "lambda_rand": lam_r, "lambda_sup": lam_sup, "delta_sup": dX, "max_abs_diff": float(np.abs(w - x).max()),
+                                     "sd_diff": float((w - x).std()), "corr_x_w": S.corr(x, w)}
+            if ens == "8p4e9" or X in (1e4, 1e7):
+                rows.append("%s & $10^{%d}$ & $%.4f$ & $%.4f$ & $%.4f$ & $%.4f$ & $%.4f$ & $%.3f$ & $%.3f$\\\\"
+                            % ("LMFDB" if (ens == "8p4e9" and j == 0) else ("2M" if (ens == "2M" and X == 1e4) else ""),
+                               int(np.log10(X)), b, b3, b3 / b, lam_meas, lam_r, lam_sup, dX))
+        if ens == "8p4e9":
+            rows.append("\\midrule")
+    body = ("\\begin{tabular}{@{}cc ccc ccc c@{}}\n\\toprule\nensemble & $X$ & $b$ (exact) & $b_{3}$ (proxy) & $b_{3}/b$ & $\\lambda_{\\mathrm{meas}}$ & $\\lambda_{\\mathrm{rand}}$ & $\\lambda_{\\sup}$ & $\\delta_{X}$\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_eiv", body, num)
+
+
+def tab_k5():
+    """the correlation of the residual of log F after the gap law with log far, four ensembles."""
+    num, rows = {}, []
+    for key, label, fname in (("100k", "100k", "floors_all_100k.npy"), ("2M", "2M", "floors_all_2M.npy"),
+                              ("8p4e9", "LMFDB $8.4\\times10^{9}$", "floors_all_8p4e9.npy"), ("1e12", "$10^{12}$ window", "floors_1e12.npy")):
+        fa = np.load(D.path(fname))
+        lg, lf, lfar = np.log(fa[:, 2]), np.log(fa[:, 5]), np.log(fa[:, 4])
+        res = S.ols(lg[:, None], lf)[3]
+        k5 = S.corr(res, lfar)
+        n = len(fa)
+        se = (1 - k5 ** 2) / np.sqrt(n - 3)
+        num[key] = {"n": int(n), "K5": k5, "se": float(se), "g_slope": float(S.ols(lg[:, None], lf)[0][0])}
+        rows.append("%s & %d & $%.3f$ & $%.3f$\\\\" % (label, n, k5, se))
+    body = ("\\begin{tabular}{@{}lrcc@{}}\n\\toprule\nensemble & pairs & $\\operatorname{corr}(\\text{resid},\\log\\far)$ & s.e.\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_k5", body, num)
+
+
+def _window_spacings(name):
+    base, off = D.load_window(name)
+    mid = 0.5 * (off[:-1] + off[1:])
+    return np.diff(off) * dens(base + mid), base, off
+
+
+def tab_shield():
+    """Table: the compensation shield on five ensembles, with standard errors."""
+    num, rows = {}, []
+    srcs = [("100k", "100k", D.load_odlyzko("zeros1")), ("2M", "2M", D.load_odlyzko("zeros6")), ("8p4e9", "LMFDB $8.4\\times10^{9}$", D.load_longdouble())]
+    for key, label, z in srcs:
+        gaps = np.asarray(np.diff(z), dtype=float)   # 80-bit differences for the primary ensemble
+        ii = np.load(D.path("lehmer_rows_%s.npy" % key))[:, 0].astype(int) - 1
+        num[key] = _shield(gaps, ii, 1.0 / dens(np.load(D.path("lehmer_rows_%s.npy" % key))[:, 1]))
+        rows.append(_shield_row(label, num[key]))
+    for key, label, name in (("1e12", "$10^{12}$ window", "zeros3"), ("1e21", "$10^{21}$ window", "zeros4")):
+        base, off = D.load_window(name)
+        gaps = np.diff(off)
+        ii = np.load(D.path("lehmer_rows_%s.npy" % key))[:, 0].astype(int) - 1
+        ok = (ii >= 1) & (ii + 1 < len(gaps))
+        t0w = np.load(D.path("lehmer_rows_%s.npy" % key))[:, 1] + base
+        num[key] = _shield(gaps, ii[ok], 1.0 / dens(t0w[ok]))
+        num[key]["n_edge_excluded"] = int((~ok).sum())
+        rows.append(_shield_row(label, num[key]))
+    body = ("\\begin{tabular}{@{}lrcc@{}}\n\\toprule\nensemble & pairs & preceding gap & following gap\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_shield", body, num)
+
+
+def _shield(gaps, ii, gm):
+    prev, nxt = gaps[ii - 1] / gm, gaps[ii + 1] / gm
+    n = len(ii)
+    return {"n": int(n), "prev": float(prev.mean()), "next": float(nxt.mean()), "se_prev": float(prev.std(ddof=1) / np.sqrt(n)),
+            "se_next": float(nxt.std(ddof=1) / np.sqrt(n)), "both": float(0.5 * (prev.mean() + nxt.mean()))}
+
+
+def _shield_row(label, r):
+    return "%s & %d & $%.3f\\pm%.3f$ & $%.3f\\pm%.3f$\\\\" % (label, r["n"], r["prev"], r["se_prev"], r["next"], r["se_next"])
+
+
+def tab_delta0():
+    """Table: Delta_0(X), the uniform bound on the harmonics k >= 4 (Lemma 9.1)."""
+    pr = E.Primes(10 ** 7)
+    terms = E.Delta0_terms(pr)
+    num, rows = {}, []
+    for X in XS:
+        v = float(terms[pr.p <= X].sum())
+        num[str(int(X))] = v
+        rows.append("$10^{%d}$ & $%.10f$\\\\" % (int(np.log10(X)), v))
+    # the tail beyond X = 1e7: per prime sum_{k>=4} p^-k/2/k <= p^-2/(4(1-X^-1/2)), and by partial summation with
+    # Rosser-Schoenfeld pi(x) < (x/log x)(1 + 3/(2 log x)) for x > 1, sum_{p>X} p^-2 <= 2(1 + 1.5/log X)/(X log X)
+    X = 1e7
+    tail = 2 * (1 + 1.5 / np.log(X)) / (X * np.log(X)) / (4 * (1 - X ** -0.5))
+    num["tail_estimate"] = float(1 / (4 * X * np.log(X)))
+    num["tail_bound"] = float(tail); num["p2"] = float(terms[0]); num["share_p2"] = float(terms[0] / terms.sum())
+    num["variation"] = float(num["10000000"] - num["100"])
+    rows.append("all primes & $%.10f+\\theta\\cdot%.1f\\times10^{-9}$\\\\" % (num["10000000"], tail * 1e9))
+    body = "\\begin{tabular}{@{}cl@{}}\n\\toprule\n$X$ & $\\Delta_{0}(X)$\\\\\n\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
+    write("tab_delta0", body, num)
+
+
+def tab_uniform():
+    """Table: the excursion-measure criterion N d(u - m) of the conditional uniform bound, H = T, m = 0.5."""
+    tb = T.TailBounds(10 ** 7)
+    H = 8436146000.0
+    m = 0.5
+    N = tb.N_criterion(H, m)
+    num, rows = {"N": N, "H": H, "m": m}, []
+    for u in (9.0, 9.36, 9.5, 10.0):
+        d_, s_ = tb.best(u - m)
+        num[str(u)] = {"d": d_, "s": s_, "Nd": N * d_}
+        rows.append("$%.2f$ & $%.2f$ & $%.2f$ & %s & %s\\\\" % (u, u - m, s_, sci(d_, 2), sci(N * d_, 2)))
+    body = ("\\begin{tabular}{@{}ccccc@{}}\n\\toprule\n$u$ & $u-m$ & $s^{*}$ & $d(u-m)\\le$ & $N\\,d(u-m)$\\\\\n\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_uniform", body, num)
+
+
+def tab_sweep():
+    """Table: the detector sweep over the primary ensemble (Appendix C)."""
+    a = np.genfromtxt(D.path("detector_sweep_8p4e9.csv"), delimiter=",", names=True)
+    num = {"n": int(len(a)), "sign_changes": int(a["n_sign_changes"].sum()), "max_Ghat": float(a["max_Ghat"].max()),
+           "g_at_max_Ghat": float(a["g"][np.argmax(a["max_Ghat"])]), "max_pair_term": float(np.max(-8 / a["g"] ** 2)),
+           "r": [float(a["r"].min()), float(np.median(a["r"])), float(a["r"].max())],
+           "H_rel": [float(a["H_over_halfgap"].min()), float(np.median(a["H_over_halfgap"])), float(a["H_over_halfgap"].max())],
+           "far": [float(a["far"].min()), float(np.median(a["far"])), float(a["far"].max())]}
+    rows = ["$r=\\hthr/(g/2)$ & $%.6f$ & $%.6f$ & $%.6f$\\\\" % tuple(num["r"]),
+            "$H/(g/2)$, $H=\\sqrt{2/\\far}$ & $%.3f$ & $%.2f$ & $%.2f$\\\\" % tuple(num["H_rel"]),
+            "$\\far$ ($W=250$) & $%.3f$ & $%.2f$ & $%.2f$\\\\" % tuple(num["far"])]
+    body = "\\begin{tabular}{@{}lccc@{}}\n\\toprule\nstatistic & min & median & max\\\\\n\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
+    write("tab_sweep", body, num)
+
+
+def tab_dispsub():
+    """Table: displacement law on the first fifteen pairs of the rank subsample (Appendix B)."""
+    a = np.genfromtxt(D.path("reference_8p4e9_sub.csv"), delimiter=",", names=True)
+    rows, num = [], {"rows": []}
+    for k in range(len(a)):
+        rows.append("%d & %d & %s & $%+.4f$ & %s & %s & %.2f\\\\" % (a["rank"][k], a["idx1"][k], sci(a["g"][k], 4), a["lambda_far"][k],
+                                                                  sci(a["delta"][k], 4), sci(a["prediction"][k], 4), a["abs_rel_err_pct"][k]))
+        num["rows"].append({"rank": int(a["rank"][k]), "idx1": int(a["idx1"][k]), "g": float(a["g"][k]), "lambda_far": float(a["lambda_far"][k]),
+                            "delta": float(a["delta"][k]), "prediction": float(a["prediction"][k]), "err_pct": float(a["abs_rel_err_pct"][k]),
+                            "Rall": float(a["Rall"][k]), "curv_dev": float(a["curv_dev"][k])})
+    num["corr"] = S.corr(a["delta"], a["prediction"]); num["median_err"] = float(np.median(a["abs_rel_err_pct"])); num["max_err"] = float(a["abs_rel_err_pct"].max())
+    num["n_below_1pct"] = int((a["abs_rel_err_pct"] < 1).sum()); num["max_abs_Rall"] = float(np.abs(a["Rall"]).max())
+    num["max_abs_err"] = float(np.abs(a["delta"] - a["prediction"]).max())
+    body = ("\\begin{tabular}{@{}rrccccc@{}}\n\\toprule\nrank & $n$ & $g$ & $\\lfar$ & $\\delta$ (measured) & $(g^{2}/8)\\lfar$ & rel.\\ err.\\ (\\%)\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_dispsub", body, num)
+
+
+def demand(f8, lp8, zs8, j, X, h):
+    """the demand Delta_*(h; X) of (8.5) on every pair: orbit local term + s_-(X) - (log F - log|P_X|)."""
+    g = f8[:, 2]
+    eps = g / 2
+    Sfar = zs8[1, :, j] - K.pair_term(g, X)
+    s_minus = float(np.percentile(Sfar, 5))
+    obs = np.log(f8[:, 5]) - lp8[:, j]
+    return K.orbit_local_term(eps, h, X) + s_minus - obs, s_minus, Sfar
+
+
+def tab_demand():
+    """Table: the demand of the depth certificate at depths g/2 and g, exact orbit term; the geometric part at H."""
+    f8 = np.load(D.path("floors_all_8p4e9.npy")); lp8 = np.load(D.path("logP_pairs_8p4e9.npy")); zs8 = np.load(D.path("zsum_pairs_8p4e9.npy"))
+    g, far = f8[:, 2], f8[:, 4]
+    eps = g / 2
+    H = np.sqrt(2 / far)
+    geo = np.log((eps ** 2 + 2 * H ** 2) ** 2 / eps ** 2)
+    num = {"geometric": {"min_pos": float(geo[geo > 0].min()), "median": float(np.median(geo)), "max": float(geo.max()), "n_pos": int((geo > 0).sum()),
+                         "neg_values": sorted(float(v) for v in geo[geo <= 0])}}
+    rows = []
+    for j, X in enumerate(XS):
+        scale = 2 * (GAMMA_E + np.log(np.log(X)))
+        dE, s_minus, Sfar = demand(f8, lp8, zs8, j, X, eps)
+        dG, _, _ = demand(f8, lp8, zs8, j, X, 2 * eps)
+        zH = np.sqrt(eps ** 2 + 2 * H ** 2) * np.log(X)
+        zE = np.sqrt(3) * eps * np.log(X)
+        num[str(int(X))] = {"scale": float(scale), "s_minus": s_minus,
+                            "eps": {"median": float(np.median(dE)), "min": float(dE.min()), "max": float(dE.max()), "n_pos": int((dE > 0).sum())},
+                            "g": {"median": float(np.median(dG)), "min": float(dG.min()), "n_pos": int((dG > 0).sum())},
+                            "n_zH_le_1": int((zH <= 1).sum()), "max_zE": float(zE.max()), "median_zE": float(np.median(zE))}
+        rows.append("$10^{%d}$ & $%.2f$ & $%+.2f$ & $%+.2f$ & $%+.2f$ & %d & $%+.2f$ & %d & %d\\\\"
+                    % (int(np.log10(X)), scale, s_minus, np.median(dE), dE.min(), (dE > 0).sum(), np.median(dG), (dG > 0).sum(), (zH <= 1).sum()))
+    body = ("\\begin{tabular}{@{}c cc ccc cc c@{}}\n\\toprule\n & & & \\multicolumn{3}{c}{depth $h=g/2$} & \\multicolumn{2}{c}{depth $h=g$} & \\\\\n"
+            "\\cmidrule(lr){4-6}\\cmidrule(lr){7-8}\n$X$ & $2\\log(\\e^{\\gamma_{E}}\\log X)$ & $s_{-}(X)$ & median & min & $\\#>0$ & median & $\\#>0$ & $\\#\\{z_{H}\\le1\\}$\\\\\n\\midrule\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
+    write("tab_demand", body, num)
+
+
+ALL = [tab_identity, tab_floorid, tab_fits, tab_sub, tab_ladder, tab_eiv, tab_smooth, tab_decomp, tab_k5, tab_deficit, tab_blocks,
+       tab_farlaw, tab_shield, tab_gue, tab_demand, tab_delta0, tab_chernoff, tab_uniform, tab_disp, tab_dispsub, tab_sweep, tab_lehmer]
 
 if __name__ == "__main__":
     if "--out" in sys.argv:

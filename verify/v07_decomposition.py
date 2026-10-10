@@ -1,5 +1,5 @@
-"""V7 -- the Euler-Hadamard decomposition of the floor (Observation 5.7, Table 5.3)
-and the loading accounting (Observation 5.8)."""
+"""V7 -- the Euler-Hadamard decomposition of the floor (Observation 5.9, Table 5.6)
+and the loading accounting (Observation 5.10)."""
 import numpy as np
 from scipy.special import sici
 
@@ -9,7 +9,7 @@ from tightpairs.report import close, report, below, equal, section
 
 
 def run(ctx):
-    section("V7: decomposition of the floor (Section 5.4, Table 5.3)")
+    section("V7: decomposition of the floor (Section 5.7, Table 5.6)")
     td = ctx.table("tab_decomp")
     lf8, lf2 = np.log(ctx.f8[:, 5]), np.log(ctx.f2[:, 5])
     for d, Dl in enumerate((100, 1000)):
@@ -17,7 +17,7 @@ def run(ctx):
             R = lf8 - ctx.lp8[:, j] - ctx.zs8[d, :, j]
             tg = td["8p4e9"][str(Dl)][str(int(X))]
             ok = abs(np.median(R) - tg["median"]) <= 1e-9 and abs(R.std() - tg["sd"]) <= 1e-9 and abs(np.abs(R).max() - tg["max"]) <= 1e-9
-            report("V7 R Delta=%d X=1e%d med/sd/max (Table 5.3)" % (Dl, int(np.log10(X))), "%+.4f/%.4f/%.3f" % (np.median(R), R.std(), np.abs(R).max()),
+            report("V7 R Delta=%d X=1e%d med/sd/max (Table 5.6)" % (Dl, int(np.log10(X))), "%+.4f/%.4f/%.3f" % (np.median(R), R.std(), np.abs(R).max()),
                    "%+.4f/%.4f/%.3f" % (tg["median"], tg["sd"], tg["max"]), 1e-9, ok)
     m1000 = [td["8p4e9"]["1000"][str(int(X))] for X in XS]
     report("V7 Delta=1000 medians in [0.0001, 0.0013]", "%.4f..%.4f" % (min(v["median"] for v in m1000), max(v["median"] for v in m1000)), "[0.0001,0.0013]", "-",
@@ -37,7 +37,7 @@ def run(ctx):
     sub = ctx._cache.get("sub8", np.sort(ctx.rng.choice(len(ctx.idx8), 40, replace=False)))
     zs_chk = np.array([K.zsum(ctx.zd, ctx.zl, ctx.t0_8[sub], Dl) for Dl in (100.0, 1000.0)])
     below("V7 S_Delta recomputed on %d pairs, max dev" % len(sub), float(np.max(np.abs(zs_chk - ctx.zs8[:, sub, :]))), 1e-9)
-    # the loading explained (Observation 5.8)
+    # the loading explained (Observation 5.10)
     g8, lg8 = ctx.f8[:, 2], np.log(ctx.f8[:, 2])
     far8 = ctx.f8[:, 4]
     acc = td["loading"]
@@ -57,6 +57,7 @@ def run(ctx):
         below("V7 residual slopes < 0.001, X=1e%d" % int(np.log10(X)), max(abs(ar), abs(br)), 0.001)
         close("V7 exact accounting of a, X=1e%d" % int(np.log10(X)), 2 + ap + a2 + ar, a, 1e-9, "%.6f", "%.6f")
         close("V7 exact accounting of b, X=1e%d" % int(np.log10(X)), 1 + bp + b2 + br, b, 1e-9, "%.6f", "%.6f")
+        close("V7 ... the accounted coefficients are those of Table 5.1, X=1e%d" % int(np.log10(X)), abs(a - tf["8p4e9"][str(int(X))]["a"]) + abs(b - tf["8p4e9"][str(int(X))]["b"]), 0.0, 1e-10, "%.1e", "%.0f")
         close("V7 corr(S_far, logP) X=1e%d" % int(np.log10(X)), S.corr(Sf, ctx.lp8[:, j]), tg["corr_Sfar_logP"], 1e-9, "%.3f", "%.3f")
         close("V7 corr(S_far, log far) X=1e%d" % int(np.log10(X)), S.corr(Sf, np.log(far8)), tg["corr_Sfar_logfar"], 1e-9, "%.3f", "%.3f")
         close("V7 sd(S_far) X=1e%d" % int(np.log10(X)), Sf.std(), tg["sd_Sfar"], 1e-9, "%.3f", "%.3f")

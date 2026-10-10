@@ -198,10 +198,35 @@ def load_odlyzko(name, data_dir=None):
                             "https://www-users.cse.umn.edu/~odlyzko/zeta_tables/" % (name, name, data_dir or DATA))
 
 
-def load_odlyzko_deltas(name, data_dir=None):
-    """a table stored as successive differences (zeros4): cumulative sum in 80-bit precision."""
-    d = load_odlyzko(name, data_dir)
-    return np.cumsum(d.astype(np.longdouble))
+def load_window(name, data_dir=None):
+    """Odlyzko's window table `name` (zeros3: zeros 10^12+1 .. 10^12+10^4; zeros4: zeros
+    10^21+1 .. 10^21+10^4).  The file states 'Values of gamma - B' in its header and then lists
+    gamma - B for 10^4 consecutive zeros.  Returns (B as a Python int, offsets as float64);
+    the offsets are below 2*10^3, so double precision keeps them to 2e-13, far below the
+    accuracy the tables state (10^-8 for zeros3, 'probably' 10^-6 for zeros4)."""
+    import re
+    for fn, op in ((name + ".gz", lambda f: gzip.open(f, "rt")), (name, lambda f: open(f, "rt"))):
+        f = path(fn, data_dir)
+        if os.path.exists(f):
+            lines = op(f).read().splitlines()
+            break
+    else:
+        raise FileNotFoundError("%s(.gz) not found in %s: download the table from "
+                                "https://www-users.cse.umn.edu/~odlyzko/zeta_tables/" % (name, data_dir or DATA))
+    m = re.search(r"Values of gamma - (\d+)", lines[0])
+    assert m, "header of %s not recognised" % name
+    base = int(m.group(1))
+    vals = []
+    for l in lines[1:]:
+        l = l.strip()
+        if re.fullmatch(r"\d+\.\d+", l):
+            vals.append(float(l))
+    off = np.array(vals)
+    assert len(off) == 10000 and np.all(np.diff(off) > 0), "%s: expected 10^4 increasing values" % name
+    return base, off
+
+
+WINDOWS = {"1e12": "zeros3", "1e21": "zeros4"}
 
 
 # ----------------------------------------------------------------- selections
@@ -214,9 +239,26 @@ def tight_pairs(z, s_max=S_TIGHT):
     return np.flatnonzero(s < s_max)
 
 
+def rank_subsample(g, n=300):
+    """the rank subsample of an ensemble: the pairs at n evenly spaced ranks of the gap g
+    (ranks round(k (N-1)/(n-1)), k = 0..n-1, of the stable ascending order of g).  Returns
+    indices into g; the first entries are the tightest pairs."""
+    order = np.argsort(np.asarray(g, dtype=float), kind="stable")
+    return order[np.round(np.linspace(0, len(order) - 1, n)).astype(int)]
+
+
 def normalised_spacings(z):
     z = np.asarray(z, dtype=float)
     return np.diff(z) * dens(z.mean())
+
+
+def local_spacings(z):
+    """normalised spacings s_i = (gamma_{i+1} - gamma_i) dens((gamma_i + gamma_{i+1})/2), the
+    normalisation of the tight-pair definition; differences are formed in the dtype of z
+    (pass the 80-bit ordinates for the primary ensemble)."""
+    g = np.diff(z)
+    t = 0.5 * (z[:-1] + z[1:])
+    return np.asarray(g, dtype=float) * dens(np.asarray(t, dtype=float))
 
 
 def control_indices(z, n=N_CTRL, seed=CTRL_SEED, band=CTRL_BAND):
@@ -230,7 +272,7 @@ def control_indices(z, n=N_CTRL, seed=CTRL_SEED, band=CTRL_BAND):
 
 # ----------------------------------------------------------------- the all-gaps scan
 def load_allgaps(data_dir=None, hl=None):
-    """the all-gaps scan of Section 6.4 as (gap_idx, t_mid, g, floor), 193,179 rows sorted by t.
+    """the all-gaps scan of Section 6.5 as (gap_idx, t_mid, g, floor), 193,179 rows sorted by t.
     The file moment_allgaps.npy stores (gap_idx, floor); t_mid and g are the midpoint and
     length of gap gap_idx formed from the double-precision ordinates, as in the scan."""
     a = np.load(path("moment_allgaps.npy", data_dir))

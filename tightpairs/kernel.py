@@ -1,4 +1,4 @@
-"""The Gonek-Hughes-Keating kernel on the critical line (Lemma 5.5 of the paper):
+"""The Gonek-Hughes-Keating kernel on the critical line (Lemma 5.7 of the paper):
 
     log|Z_X(1/2+it)| = sum_gamma Ci_u(|t - gamma| log X),
 
@@ -38,3 +38,18 @@ def pair_term(g, X):
 def pair_term_leading(g, X):
     """2 gamma_E + 2 log((g/2) log X): the leading term of pair_term."""
     return 2 * GAMMA_E + 2 * np.log((np.asarray(g, dtype=float) / 2) * np.log(X))
+
+
+def orbit_local_term(eps_app, h, X):
+    """sum over the four zeros 1/2 +- h + i(t0 +- sqrt(eps_app^2 + h^2)) of -Re E_1((s - rho) log X) at s = 1/2 + i t0:
+    the exact kernel term of the orbit configuration of Section 4.4, the term L_orb of (8.1) (without the u-averaging)."""
+    from scipy.special import exp1
+    eps_app, h = np.asarray(eps_app, float), np.asarray(h, float)
+    et = np.sqrt(eps_app ** 2 + h ** 2)
+    L = np.log(X)
+    tot = 0.0
+    for sg in (1, -1):
+        for tg in (1, -1):
+            z = (-sg * h - 1j * tg * et) * L
+            tot = tot - np.real(exp1(z))
+    return tot

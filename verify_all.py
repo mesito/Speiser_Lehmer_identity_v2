@@ -5,7 +5,7 @@
     the Speiser-Lehmer identity, the displacement law and the Euler-Hadamard
     decomposition of the floor" (2026).
 
-Twelve verification groups V1-V12 (verify/v01_*.py ... v12_*.py) map to the
+Thirteen verification groups V1-V13 (verify/v01_*.py ... v13_*.py) map to the
 sections of the paper (Appendix A, Table A.1).  Each check prints
     name | computed | target | tolerance | PASS/FAIL
 and the script exits with status 1 if any check fails.  Targets are the numbers
@@ -15,10 +15,10 @@ quoted in the text are written into the groups.
 
 Usage:  python3 verify_all.py [--full] [--only V3,V5] [--list]
   default : all groups, with the shipped arrays checked against fresh
-            recomputations on random subsets (about 3 minutes on one core)
+            recomputations on random subsets (about 3.5 minutes on one core)
   --full  : complete recomputations (every pair, every reference pair, the
             exact-ordinate check on every ordinate, the Monte-Carlo and
-            importance-sampling tiers; about 20 minutes)
+            importance-sampling tiers; about 28 minutes)
 
 Data root: $RH_DATA (default ./data); tables: $RH_TABLES (default ./tables).
 """
@@ -32,7 +32,8 @@ from tightpairs import report  # noqa: E402
 from verify.context import Context  # noqa: E402
 
 GROUPS = ["v01_data", "v02_identity", "v03_floorlaw", "v04_sweep", "v05_displacement", "v06_euler",
-          "v07_decomposition", "v08_mediation", "v09_farfield", "v10_gue", "v11_certificate", "v12_tails"]
+          "v07_decomposition", "v08_mediation", "v09_farfield", "v10_gue", "v11_certificate", "v12_tails",
+          "v13_subsample"]
 
 
 def main(argv):

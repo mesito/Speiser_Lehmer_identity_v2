@@ -3,7 +3,7 @@
 For X = 1e7 and each prime p <= X, K_p = floor(log X / log p),
     term_p(theta) = sum_{k<=K_p} p^{-k/2} cos(k theta)/k,   |term_p| <= a_p = sum_k p^{-k/2}/k,
     sigma_p^2 = (1/2) sum_k p^{-k}/k^2,   Lambda_1 = sum_{p^k<=X} p^{-k/2} log p.
-Hybrid Chernoff bound (Theorem 9.4): exact factors M_p(-s) for p <= 1000 (midpoint
+Hybrid Chernoff bound (Theorem 9.7): exact factors M_p(-s) for p <= 1000 (midpoint
 rule, 4096 nodes), Bennett's inequality for p > 1000.
 """
 import numpy as np

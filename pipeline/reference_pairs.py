@@ -17,9 +17,11 @@ digits:
   r2        8 / (g^2 S_on(t0)) at W = 250 (the Speiser ratio squared)
 
 Ensembles: the fifteen tightest pairs (smallest normalised spacing s) of the
-primary ensemble, the thirty tightest pairs of the first 1e5 zeros, the fifteen
-tightest of the 2M ensemble, and Lehmer's pair (gamma_6709, gamma_6710); each
-set is ordered by increasing s.
+primary ensemble ("8p4e9"); the first fifteen pairs of the rank subsample of the
+primary ensemble (tightpairs.data.rank_subsample: ranks 0, 9, 18, ... of the gap,
+"8p4e9_sub", Table B.1); the thirty tightest pairs of the first 1e5 zeros; the
+fifteen tightest of the 2M ensemble; and Lehmer's pair (gamma_6709, gamma_6710).
+Except for 8p4e9_sub, which is in rank order, each set is ordered by increasing s.
 Writes data/reference_<ens>.csv.  Runtime: about 4 minutes (primary), 1 minute
 (the rest).
 """
@@ -80,22 +82,28 @@ def write(name, rows):
           % (np.corrcoef(r[:, 4], r[:, 5])[0, 1], np.median(r[:, 6]), r[:, 6].max(), np.abs(r[:, 12]).max(), np.abs(r[:, 13]).max()), flush=True)
 
 
-def main(which=("8p4e9", "100k", "2M", "lehmer")):
+def main(which=("8p4e9", "8p4e9_sub", "100k", "2M", "lehmer")):
     mp.mp.dps = 30
     t = time.time()
-    if "8p4e9" in which:
+    if "8p4e9" in which or "8p4e9_sub" in which:
         hl = D.load_hilo()
         zl = D.load_longdouble(hl=hl)
         idx = D.tight_pairs(hl[:, 0])
         s = (hl[idx + 1, 0] - hl[idx, 0]) * dens((hl[idx, 0] + hl[idx + 1, 0]) / 2)
-        rows = []
-        for i in idx[np.argsort(s)][:15]:
-            i = int(i)
-            ga = mp.mpf(float(hl[i, 0])) + mp.mpf(float(hl[i, 1]))
-            gb = mp.mpf(float(hl[i + 1, 0])) + mp.mpf(float(hl[i + 1, 1]))
-            rows.append(run_pair(zl, i, ga, gb, False, "8p4e9"))
-        write("reference_8p4e9.csv", rows)
-        print("(%.0fs)" % (time.time() - t))
+        g = np.asarray(zl[idx + 1] - zl[idx], dtype=float)
+        sel = {"8p4e9": idx[np.argsort(s)][:15],              # the fifteen tightest pairs
+               "8p4e9_sub": idx[D.rank_subsample(g)[:15]]}   # the first fifteen of the rank subsample
+        for ens in ("8p4e9", "8p4e9_sub"):
+            if ens not in which:
+                continue
+            rows = []
+            for i in sel[ens]:
+                i = int(i)
+                ga = mp.mpf(float(hl[i, 0])) + mp.mpf(float(hl[i, 1]))
+                gb = mp.mpf(float(hl[i + 1, 0])) + mp.mpf(float(hl[i + 1, 1]))
+                rows.append(run_pair(zl, i, ga, gb, False, ens))
+            write("reference_%s.csv" % ens, rows)
+            print("(%.0fs)" % (time.time() - t))
     for ens, fname, ntop in (("100k", "zeros1", 30), ("2M", "zeros6", 15)):
         if ens not in which:
             continue
@@ -118,4 +126,4 @@ def main(which=("8p4e9", "100k", "2M", "lehmer")):
 
 
 if __name__ == "__main__":
-    main(tuple(sys.argv[1:]) or ("8p4e9", "100k", "2M", "lehmer"))
+    main(tuple(sys.argv[1:]) or ("8p4e9", "8p4e9_sub", "100k", "2M", "lehmer"))

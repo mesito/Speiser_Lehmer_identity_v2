@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """scan_allgaps.py -- floors of every fourth gap of the primary ensemble
-(Section 6.4): max|Z| over 12 interior samples, with the fast instrument
+(Section 6.5): max|Z| over 12 interior samples, with the fast instrument
 (main sum + C_0, 80-bit base phase at T0 = 8436146000 and double-precision
 offsets; realised error about 5e-9, adequate for floors of order 1).
 

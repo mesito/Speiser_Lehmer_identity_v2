@@ -1,5 +1,5 @@
 """V3 -- Theorem A(b),(c): the floor law and the midpoint curvature on the reference pairs
-(Table 3.2); Corollary 3.5 (endpoint-midpoint identity)."""
+(Table 3.2); Corollary A.1 (endpoint-midpoint identity)."""
 import numpy as np
 import mpmath as mp
 
@@ -54,7 +54,7 @@ def run(ctx):
         rel("V3 (log omega)'' closed form vs numerical, t=%g" % t, float(om2), float(mp.diff(f, tm, 2)), 1e-8)
         below("V3 |t^2 (log omega)''| <= 7/4, t=%g" % t, abs(float(om2 * tm * tm)), 1.75 + 1e-12)
     close("V3 t^2 (log omega)'' at t=8.4e9 -> -1.75", float(-7.0 / 4), -1.75, 1e-12, "%.4f", "%.2f")
-    # Corollary 3.5: S_end = 2 far + positive series, and the bounds (3.17)
+    # Corollary A.1: S_end = 2 far + positive series, and the bounds (3.17)
     r8 = ctx.rows["8p4e9"]
     worst = 0.0
     viol = 0

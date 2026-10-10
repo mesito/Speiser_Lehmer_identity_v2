@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """compute_logP_allgaps.py -- exact log|P_X(1/2+it)| (X = 1e6) at the 193,179
-gap midpoints of the block-averaging test (Section 6.4).
+gap midpoints of the block-averaging test (Section 6.5).
 
 Phases: the base phase U_p = (T0 log p) mod 2pi is formed once in 80-bit
 precision with T0 = 8436146000; the offset (t - T0) log p <= 3.2e6 is then

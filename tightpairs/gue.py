@@ -1,4 +1,4 @@
-"""Sine-kernel quantities of Theorem 7.2 and the GUE Monte-Carlo sampler.
+"""Sine-kernel quantities of Theorem E and the GUE Monte-Carlo sampler.
 
     S(x) = sin(pi x)/(pi x),   rho(x) = 1 - S^2 - (3/pi^2) S'^2,
     C(a) = int_{|x|>a} rho_3(x,a,-a)/rho_2(a,-a) dx/x^2,   C_GUE = 4 pi^2/15.
@@ -99,3 +99,35 @@ def sample_pairs(N, want, seed=2024, windows=(25.0, 50.0), s_max=0.25, bulk_frac
                 sums[w].append(np.sum(1.0 / relp[m] ** 2) if m.any() else 0.0)
             npair += 1
     return dict(sums={w: np.array(v[:want]) for w, v in sums.items()}, lag=np.vstack(lag), tails=np.concatenate(tails))
+
+
+# ----------------------------------------------------------------- exact small-gap tail of the sine process
+def gap_probability(s, m=40):
+    """E_2(0; s) = det(I - K_sine) on L^2(0, s): the probability that an interval of length s
+    (in units of the mean spacing) contains no point of the sine process.  Nystrom
+    discretisation with m Gauss-Legendre nodes (Bornemann, Math. Comp. 79 (2010))."""
+    x, w = np.polynomial.legendre.leggauss(m)
+    x = 0.5 * s * (x + 1.0)
+    w = 0.5 * s * w
+    d = x[:, None] - x[None, :]
+    K = np.sinc(d)                       # sin(pi d)/(pi d), equal to 1 on the diagonal
+    sw = np.sqrt(w)
+    return float(np.linalg.det(np.eye(m) - sw[:, None] * K * sw[None, :]))
+
+
+def spacing_cdf(s0, h=1e-3):
+    """Pr[s < s0] for the nearest-neighbour spacing of the sine process: F(s0) = 1 + E_2'(0; s0),
+    the derivative by central differences with one Richardson step."""
+    d1 = (gap_probability(s0 + h) - gap_probability(s0 - h)) / (2 * h)
+    d2 = (gap_probability(s0 + h / 2) - gap_probability(s0 - h / 2)) / h
+    return 1.0 + (4 * d2 - d1) / 3.0
+
+
+def tail_ratio_exact(s0):
+    """Pr[s < s0] / (pi^2 s0^3 / 9) for the sine process."""
+    return spacing_cdf(s0) / (np.pi ** 2 * s0 ** 3 / 9.0)
+
+
+def tail_ratio_series(s0):
+    """the same from the small-s expansion F(s) = pi^2 s^3/9 - 2 pi^4 s^5/225 + pi^6 s^7/2205 - ..."""
+    return 1.0 - 18 * np.pi ** 2 / 225 * s0 ** 2 + 9 * np.pi ** 4 / 2205 * s0 ** 4
