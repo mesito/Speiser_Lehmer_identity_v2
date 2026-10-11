@@ -106,6 +106,11 @@ def run(ctx):
     ts = tb["tight_subset"]
     report("V8 blocks tight subset n/a/b/R2 (680/1.914/0.886/0.945)", "%d/%.3f/%.3f/%.3f" % (ts["n"], ts["a"], ts["b"], ts["R2"]), "680/1.914/0.886/0.945", 1.5e-3,
            ts["n"] == 680 and abs(ts["a"] - 1.914) <= 1.5e-3 and abs(ts["b"] - 0.886) <= 1.5e-3 and abs(ts["R2"] - 0.945) <= 1.5e-3)
+    close("V8 tight subset s.e.(a) (0.026)", ts["se_a"], 0.026, 5e-4, "%.4f", "%.3f")
+    close("V8 tight subset s.e.(b) (0.011)", ts["se_b"], 0.011, 5e-4, "%.4f", "%.3f")
+    t6 = ctx.table("tab_fits")["8p4e9"]["1000000"]
+    close("V8 tight subset vs Table 5.1: a, in s.e. of the difference (1.6)", abs(ts["a"] - t6["a"]) / np.hypot(ts["se_a"], t6["se_a"]), 1.6, 0.05, "%.3f", "%.1f")
+    close("V8 tight subset vs Table 5.1: b, in s.e. of the difference (1.3)", abs(ts["b"] - t6["b"]) / np.hypot(ts["se_b"], t6["se_b"]), 1.3, 0.05, "%.3f", "%.1f")
     sa = ctx.rng.choice(len(am), 20, replace=False)
     lpa_chk = E.logP_exact(am[sa, 1].astype(np.longdouble), xs=[10 ** 6])[:, 0]
     below("V8 all-gap log|P_1e6| recomputed (20), max dev", float(np.max(np.abs(lpa_chk - lpa[sa]))), 1e-8)

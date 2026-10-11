@@ -33,7 +33,7 @@ def run(ctx):
         below("V10 ... Fredholm determinant vs series 1 - 18pi^2 s^2/225 + 9pi^4 s^4/2205 (<= 4e-6)", abs(ex - GU.tail_ratio_series(s0)), 4e-6)
         close("V10 ... equals Table 7.3", ex, tgu["tail_ratios"][k], 1e-12, "%.6f", "%.6f")
     rel("V10 E_2(0;s) stable under doubling the nodes, s=0.15", GU.gap_probability(0.15, 80), GU.gap_probability(0.15, 40), 1e-14, "%.15f", "%.15f")
-    # Monte-Carlo results
+    # Monte Carlo results
     try:
         mc = ctx.arr("gue_mc_summary.npz")
         close("V10 MC N=500 window 100 (2.5781)", float(mc["N500_w100_mean"]), 2.5781, 3 * float(mc["N500_w100_se"]) + 1e-3, "%.4f", "%.4f")
@@ -72,4 +72,4 @@ def run(ctx):
         for s0 in (0.10, 0.15):
             close("V10 MC quick tier tail ratio s0=%.2f vs exact" % s0, float(np.mean(sb < s0)) / (C9 * s0 ** 3), GU.tail_ratio_exact(s0), 0.08, "%.3f", "%.3f")
     else:
-        print("    (GUE Monte-Carlo quick tier skipped; use --full)")
+        print("    (GUE Monte Carlo quick tier skipped; use --full)")

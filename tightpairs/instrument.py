@@ -7,8 +7,13 @@ tau = sqrt(t/2pi), N = floor(tau), p = tau - N: the main sum with the first
 correction term.  Every phase theta(t) - t log n is formed and reduced modulo
 2pi in 80-bit precision with the 40-digit pi of constants.py; the cosines are
 then taken in double precision.  Realised error against mpmath.siegelz at
-t ~ 8.4e9: 2.24e-10 (verify group V1).  With the double-precision 2pi in the
-reduction the error is 1.5e-7 (Section 2.3 of the paper).
+t ~ 8.4e9: at most 3.6e-8, median 8e-9 (verify group V1).  With the
+double-precision 2pi in the reduction the error is up to 4e-6 (Section 2.3 of
+the paper).
+
+Z_dd(t) keeps the corrections C_0..C_3 and forms every phase in double-double
+arithmetic (ddarith.py); realised error at most 8.4e-14 on random mid-gaps and
+9.1e-14 at the floor extrema of Table 3.2 at t ~ 8.4e9, 1.3e-13 at t ~ 2.7e11.
 
 The floor of a gap is max|Z| on a 33-point grid of the open gap, refined by a
 parabola through the three largest neighbouring samples (floor_max).  The

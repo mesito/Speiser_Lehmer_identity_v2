@@ -220,8 +220,8 @@ def tab_blocks():
                        "corr_logF_logP": S.corr(lfb, Lb), "corr_logP_logg": S.corr(Lb, lgb)}
         rows.append("%d & %s & %.3f & %.3f & %.3f & %.4f & %.3f & %.3f\\\\" % (B, "{:,}".format(len(lfb)).replace(",", "{,}"), aa, bb, se[1], r2, pc, Lb.std()))
     dA = dens(am[:, 1].mean()); mA = am[:, 2] * dA < 0.15
-    (aa, bb, cc), _, r2, _ = S.ols(np.column_stack([lgA[mA], lpa[mA]]), lfA[mA])
-    num["tight_subset"] = {"n": int(mA.sum()), "a": aa, "b": bb, "R2": r2}
+    (aa, bb, cc), se, r2, _ = S.ols(np.column_stack([lgA[mA], lpa[mA]]), lfA[mA])
+    num["tight_subset"] = {"n": int(mA.sum()), "a": aa, "b": bb, "se_a": se[0], "se_b": se[1], "R2": r2}
     num["n_gaps"] = int(len(am))
     body = ("\\begin{tabular}{@{}rrcccccc@{}}\n\\toprule\n$B$ & $n$ & $a$ & $b$ & s.e.$(b)$ & $R^{2}$ & pcorr & s.d.\\ of $\\log|\\PX|$ over blocks\\\\\n\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")

@@ -1,4 +1,4 @@
-"""Sine-kernel quantities of Theorem E and the GUE Monte-Carlo sampler.
+"""Sine-kernel quantities of Theorem E and the GUE Monte Carlo sampler.
 
     S(x) = sin(pi x)/(pi x),   rho(x) = 1 - S^2 - (3/pi^2) S'^2,
     C(a) = int_{|x|>a} rho_3(x,a,-a)/rho_2(a,-a) dx/x^2,   C_GUE = 4 pi^2/15.

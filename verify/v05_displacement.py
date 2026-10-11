@@ -20,6 +20,12 @@ def run(ctx):
         and abs(r_["lambda_far"] - float(ref["lambda_far"][k])) <= 1e-11 for k, r_ in enumerate(td["rows"]))
     report("V5 Table B.2 rows equal the reference file", "%d rows" % len(td["rows"]), "%d rows" % int(ref.size), 1e-12, ok, "%s", "%s")
     close("V5 Table B.2 correlation", float(np.corrcoef(ref["delta"], ref["prediction"])[0, 1]), td["corr"], 1e-12, "%.8f", "%.8f")
+    # the inequality of the proof of Theorem B: ((1 - sqrt(1-2h))/h - 1) = h/(1 - h + sqrt(1-2h)) <= 2h on [0, 1/2], with equality at 1/2
+    hh = np.linspace(1e-6, 0.5, 200001)
+    lhs = (1 - np.sqrt(1 - 2 * hh)) / hh - 1
+    below("V5 Theorem B: |(1-sqrt(1-2h))/h - 1 - h/(1-h+sqrt(1-2h))| on [0,1/2]", float(np.max(np.abs(lhs - hh / (1 - hh + np.sqrt(1 - 2 * hh))))), 1e-9)
+    below("V5 Theorem B: (1-sqrt(1-2h))/h - 1 <= 2h on [0,1/2] (max of ratio)", float(np.max(lhs / (2 * hh))), 1.0 + 1e-12)
+    equal("V5 Theorem B: the ratio to h exceeds 1 beyond sqrt(2)-1", bool(np.all(lhs[hh > np.sqrt(2) - 1 + 1e-6] > hh[hh > np.sqrt(2) - 1 + 1e-6])), True)
     k = int(np.argmax(ref["abs_rel_err_pct"]))
     equal("V5 max error at the pair with the smallest |delta|", int(np.argmin(np.abs(ref["delta"]))), k)
     equal("V5 ... which has the smallest |lambda_far|", int(np.argmin(np.abs(ref["lambda_far"]))), k)

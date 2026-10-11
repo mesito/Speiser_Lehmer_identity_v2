@@ -15,7 +15,7 @@ def run(ctx):
     below("V3 max |R_250| (3.0e-6)", float(np.abs(ref["R250"]).max()), 3.0e-6)
     below("V3 min |R_250| >= 1.9e-7", -float(np.abs(ref["R250"]).min()), -1.9e-7)
     below("V3 R_250 explained by the omitted tail (5e-11)", float(np.abs(ref["R250"] + (ref["farall"] - ref["far250"]) / ref["Sonall"]).max()), 5e-11)
-    below("V3 max |R_all| (7.3e-13)", float(np.abs(ref["Rall"]).max()), 7.3e-13)
+    below("V3 max |R_all| (7.2e-13)", float(np.abs(ref["Rall"]).max()), 7.25e-13)
     below("V3 max |curvature deviation| (2.9e-13)", float(np.abs(ref["curv_dev"]).max()), 2.9e-13)
     equal("V3 Table 3.2 rows equal reference file", all(abs(r["Rall"] - float(ref["Rall"][k])) < 1e-20 and abs(r["F"] / float(ref["F"][k]) - 1) < 1e-12 for k, r in enumerate(tf["rows"])), True)
     for ens, bound in (("100k", 2.3e-7), ("2M", 4.1e-7), ("lehmer", 7.1e-8)):
@@ -44,7 +44,7 @@ def run(ctx):
         j = int(np.flatnonzero(ctx.idx8 == i)[0])
         rel("V3 pair %02d shipped floor vs 30-digit floor (<= 1e-5)" % (k + 1), ctx.f8[j, 5], float(F), 1e-5)
         with mp.workdps(50):
-            below("V3 pair %02d |Z_dd - mpmath| at the extremum (<= 1e-13)" % (k + 1), abs(I.Z_dd(tstar, mp) - float(mp.siegelz(tstar))), 1e-13)
+            below("V3 pair %02d |Z_dd - mpmath| at the extremum (<= 9.1e-14)" % (k + 1), abs(I.Z_dd(tstar, mp) - float(mp.siegelz(tstar))), 9.1e-14)
     # Theorem A(c) for the archimedean term: (log omega)'' = -7/(4t^2)(1+O(t^-2))
     mp.mp.dps = 30
     for t in (10.0, 7005.08, 8.4e9):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gue_mc.py -- the GUE Monte-Carlo reference of Section 7 (Observation 7.2 and
+"""gue_mc.py -- the GUE Monte Carlo reference of Section 7 (Observation 7.2 and
 Table 7.3): conditioned far-field sums E[sum 1/x_m^2 | tight pair at the origin]
 from Dumitriu-Edelman tridiagonal GUE matrices (beta = 2), semicircle-CDF
 unfolding, bulk conditioning (|midpoint| <= 0.1 N), pairs with normalised gap

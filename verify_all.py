@@ -15,10 +15,10 @@ quoted in the text are written into the groups.
 
 Usage:  python3 verify_all.py [--full] [--only V3,V5] [--list]
   default : all groups, with the shipped arrays checked against fresh
-            recomputations on random subsets (about 3.5 minutes on one core)
+            recomputations on random subsets (about 2-4 minutes on one core)
   --full  : complete recomputations (every pair, every reference pair, the
-            exact-ordinate check on every ordinate, the Monte-Carlo and
-            importance-sampling tiers; about 28 minutes)
+            exact-ordinate check on every ordinate, the Monte Carlo and
+            importance-sampling tiers; about 20-30 minutes)
 
 Data root: $RH_DATA (default ./data); tables: $RH_TABLES (default ./tables).
 """

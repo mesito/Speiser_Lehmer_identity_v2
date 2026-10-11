@@ -57,6 +57,14 @@ def run(ctx):
     close("V2 the far-field constant 2.501 equals Table 7.1", phi.mean(), ctx.table("tab_farlaw")["LMFDB"]["ratio"], 1e-12, "%.4f", "%.4f")
     close("V2 far-field constant (2.501)", phi.mean(), 2.501, 5e-4, "%.4f", "%.3f")
     close("V2 pi^2/60", np.pi ** 2 / 60, 0.1645, 1e-4, "%.4f", "%.4f")
+    # the expansion (3.19): 1 - r = phi s^2/16 - 3 phi^2 s^4/512 + O(s^6), checked at phi = 2.5
+    phi0 = 2.5
+    for s0 in (0.02, 0.05, 0.1):
+        r0 = (1 + phi0 * s0 ** 2 / 8) ** -0.5
+        c4 = (1 - r0 - phi0 * s0 ** 2 / 16) / s0 ** 4
+        close("V2 (3.19) fourth-order coefficient at s=%.2f (-3 phi^2/512)" % s0, c4, -3 * phi0 ** 2 / 512, 5 * phi0 ** 3 * s0 ** 2 / 1024 + 1e-12, "%.6f", "%.6f")
+    below("V2 (3.19) remainder after two terms at s=0.1 is O(s^6) (<= 5 phi^3 s^6/1024)",
+          abs(1 - (1 + phi0 * 0.01 / 8) ** -0.5 - phi0 * 0.01 / 16 + 3 * phi0 ** 2 * 1e-4 / 512), 5 * phi0 ** 3 * 1e-6 / 1024)
     # the flip depth of Proposition A.4: (x-1)/(1+x)^2 = 1/(16 C_mid)
     y = 1 / (16 * Cmid)
     a_, b_, c_ = y, 2 * y - 1, y + 1

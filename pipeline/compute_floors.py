@@ -2,7 +2,7 @@
 """compute_floors.py -- floors of every tight pair and of the control mid-gaps.
 
 floor = max|Z| over the open gap, Z = Z_dd (main sum with double-double phases
-and the Riemann-Siegel corrections C_0..C_3, realised error 5e-14 at t ~ 8.4e9),
+and the Riemann-Siegel corrections C_0..C_3, realised error at most 9.1e-14 at t ~ 8.4e9),
 33-point grid plus parabolic refinement (tightpairs.instrument.floor_max_dd);
 the gap endpoints are the exact (double-double) ordinates.
 

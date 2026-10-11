@@ -79,11 +79,20 @@ class TailBounds:
                        for s_ in np.linspace(1e-6, 12, 1201))
 
     def N_criterion(self, H, m=0.5):
-        return H * self.Lam1 / (2 * m)
+        """N = H Lambda_1 / m: the number of disjoint intervals of length m/Lambda_1 in a window of length H
+        (Theorem 9.10; the one-sided interval that the window hypothesis guarantees)."""
+        return H * self.Lam1 / m
 
     def mean_value_product(self, Xsmall=100, s=1.0):
+        """prod_{p <= Xsmall} M_p(-s) for the product P_{Xsmall}, i.e. with K_p = floor(log Xsmall / log p)
+        (the harmonics of P_{Xsmall} itself, not those of P_X)."""
         idx = np.flatnonzero(self.P <= Xsmall)
-        TM = self.term_grid(idx)
+        KP = self.pr.kmax(Xsmall)
+        th = (np.arange(self.nq) + 0.5) * (2 * np.pi / self.nq)
+        TM = np.zeros((len(idx), self.nq))
+        for j, i in enumerate(idx):
+            for k in range(1, int(KP[i]) + 1):
+                TM[j] += self.P[i] ** (-k / 2) * np.cos(k * th) / k
         return float(np.exp(np.sum(np.log(np.exp(-s * TM).mean(1)))))
 
 

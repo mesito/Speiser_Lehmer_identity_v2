@@ -10,8 +10,10 @@ Every number of the paper — every table, every constant quoted in the text, th
 arbitrary-precision reference computations of Theorem A and of the displacement
 law, the certified tail bounds — is recomputed from the raw ordinate files by
 `verify_all.py` (thirteen groups **V1–V13**, pass/fail criteria stated in the
-code), and every table of the paper is generated from the shipped arrays by
-`make_tables.py`.
+code), and every table of measured or computed quantities (Table 3.1–Table 9.3,
+Table B.1–Table C.2) is generated from the shipped arrays by
+`make_tables.py`; the descriptive Table 2.1, Table 2.2, Table 8.1 and
+Table A.1 are written by hand, the numbers of the first two being checked by V1.
 
 ## 1. Layout
 
@@ -52,8 +54,8 @@ Python ≥ 3.10 with `numpy`, `scipy`, `mpmath` (and `matplotlib` for the
 figures). No network access is required; every input ships in `data/`.
 
 ```
-python3 verify_all.py            # V1–V13, default tier, about 3.5 minutes
-python3 verify_all.py --full     # complete recomputations, about 28 minutes
+python3 verify_all.py            # V1–V13, default tier, about 2 minutes
+python3 verify_all.py --full     # complete recomputations, about 20.5 minutes
 python3 verify_all.py --only V2,V3
 python3 make_tables.py           # regenerates tables/ from data/
 python3 make_figures.py          # regenerates ../paper/figs/

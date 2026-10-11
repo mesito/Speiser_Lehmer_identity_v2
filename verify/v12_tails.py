@@ -24,7 +24,7 @@ def run(ctx):
     rel("V12 2nd-moment total", e1 + e2 + e3, 1.46e-7, 0.01)
     rel("V12 first-moment bound", tb.first_moment_bound(TB ** 2), 1.9e-17, 0.02)
     rel("V12 4th-moment crude bound", tb.fourth_moment_crude(TB ** 2), 2.6e19, 0.05)
-    for u, s_tgt, d_tgt in ((5.0, 4.20, 7.06e-5), (6.0, 5.30, 6.13e-7), (7.0, 6.47, 1.71e-9), (8.0, 7.70, 1.44e-12), (9.0, 8.98, 3.46e-16), (10.0, 10.31, 2.25e-20)):
+    for u, s_tgt, d_tgt in ((5.0, 4.20, 7.05e-5), (6.0, 5.30, 6.13e-7), (7.0, 6.47, 1.71e-9), (8.0, 7.70, 1.44e-12), (9.0, 8.98, 3.46e-16), (10.0, 10.31, 2.25e-20)):
         d_, s_ = tb.best(u)
         tj = tc[str(u)]
         report("V12 certified d(%.0f) at s* (Table 9.2)" % u, "%.3e @ %.2f" % (d_, s_), "%.2e @ %.2f" % (d_tgt, s_tgt), "0.5%/0.02",
@@ -52,20 +52,23 @@ def run(ctx):
     close("V12 tail estimate 1/(4 X log X) (1.6e-9)", td0["tail_estimate"], 1.6e-9, 5e-11, "%.3e", "%.1e")
     rel("V12 rigorous tail bound formula", 2 * (1 + 1.5 / np.log(1e7)) / (1e7 * np.log(1e7)) / (4 * (1 - 1e7 ** -0.5)), td0["tail_bound"], 1e-12)
     Nn = tb.N_criterion(TB)
-    rel("V12 N = H Lambda_1/(2m)", Nn, 5.33e13, 2e-3)
+    rel("V12 N = H Lambda_1/m (1.07e14)", Nn, 1.07e14, 5e-3)
     tu = ctx.table("tab_uniform")
     close("V12 Table 9.3: H = T_0 (start of the primary block), m = 1/2", abs(tu["H"] - 8436146000.0) + abs(tu["m"] - 0.5), 0.0, 0.0, "%.1f", "%.1f")
     Nt = tb.N_criterion(tu["H"], tu["m"])
     rel("V12 N for Table 9.3", Nt, tu["N"], 1e-12)
-    for u, tgt in ((9.0, 1.40), (9.36, 6.4e-2), (9.5, 1.85e-2), (10.0, 1.8e-4)):
+    for u, tgt in ((9.0, 2.80), (9.36, 0.13), (9.5, 3.7e-2), (10.0, 3.5e-4)):
         d_, s_ = tb.best(u - 0.5)
         rel("V12 N d(u-m) at u=%.2f" % u, Nt * d_, tgt, 0.03, "%.3e", "%.2e")
         rel("V12 ... equals Table 9.3", Nt * d_, tu[str(u)]["Nd"], 1e-9, "%.3e", "%.3e")
     rel("V12 d(8.5)/d(9.5) (four orders)", tu["9.0"]["d"] / tu["10.0"]["d"], 7.96e3, 0.01, "%.3e", "%.2e")
-    close("V12 prod M_p(-1), X=100", tb.mean_value_product(100, 1.0), 1.559923, 1e-6, "%.6f", "%.6f")
+    close("V12 prod M_p(-1), X=100 (1.560077)", tb.mean_value_product(100, 1.0), 1.560077, 1e-6, "%.6f", "%.6f")
+    for nq_ in (256, 16384):     # the midpoint rule converges geometrically on the periodic analytic integrand
+        tb_ = T.TailBounds(10 ** 7, nq=nq_)
+        close("V12 ... stable under %d nodes" % nq_, tb_.mean_value_product(100, 1.0), tb.mean_value_product(100, 1.0), 1e-12, "%.12f", "%.12f")
     pr = E.Primes(10 ** 7)
     PR17 = np.flatnonzero(pr.pf <= 100)
-    KP = pr.kmax(10 ** 7)
+    KP = pr.kmax(100)
     rng17 = np.random.default_rng(19)
     t17 = rng17.uniform(0.0, 2e6, 300_000)
     L17 = np.zeros(len(t17))
@@ -74,7 +77,7 @@ def run(ctx):
         for k in range(1, KP[i] + 1):
             L17 += pr.pf[i] ** (-k / 2) * np.cos(k * ph) / k
     Y17 = np.exp(-L17)
-    close("V12 MC mean (seed 19) (1.5612)", Y17.mean(), 1.5612, 5e-4, "%.4f", "%.4f")
+    close("V12 MC mean (seed 19) (1.5611)", Y17.mean(), 1.5611, 5e-4, "%.4f", "%.4f")
     close("V12 MC std err (0.0030)", Y17.std(ddof=1) / np.sqrt(len(Y17)), 0.0030, 2e-4, "%.4f", "%.4f")
     sig4, pref, pred, s21, Kv, Kpp, TM21 = T.bahadur_rao(10 ** 4, 4.580)
     close("V12 sigma(X=1e4)", sig4, 1.14500, 1e-5, "%.5f", "%.5f")
