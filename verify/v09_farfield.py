@@ -86,6 +86,7 @@ def run(ctx):
     for k in ("1e12", "1e21"):
         sew_ = 0.5 * np.hypot(sh[k][2], sh[k][3])
         below("V9 window %s two-sided shield vs large-ensemble range, in s.e." % k, max(0.0, 1.355 - both[k], both[k] - 1.395) / sew_, 1.0, "%.2f")
+        below("V9 window %s two-sided shield within 1.3 s.e. of each large-ensemble value" % k, max(abs(both[k] - both[e]) for e in ("100k", "2M", "8p4e9")) / sew_, 1.3, "%.2f")
     d2m = 0.5 * (sh["2M"][0] + sh["2M"][1]) - 0.5 * (sh["8p4e9"][0] + sh["8p4e9"][1])
     close("V9 shield: primary below 2M by 0.02", d2m, 0.02, 0.005, "%.4f", "%.2f")
     equal("V9 tight pairs in the 1e12 window", int(len(ctx.rows["1e12"])), 38)

@@ -54,8 +54,8 @@ Python ≥ 3.10 with `numpy`, `scipy`, `mpmath` (and `matplotlib` for the
 figures). No network access is required; every input ships in `data/`.
 
 ```
-python3 verify_all.py            # V1–V13, default tier, about 2 minutes
-python3 verify_all.py --full     # complete recomputations, about 20.5 minutes
+python3 verify_all.py            # V1–V13, default tier, about 3.5 minutes
+python3 verify_all.py --full     # complete recomputations, about 27.5 minutes
 python3 verify_all.py --only V2,V3
 python3 make_tables.py           # regenerates tables/ from data/
 python3 make_figures.py          # regenerates ../paper/figs/

@@ -12,9 +12,9 @@ V1 80-bit ordinates strictly increasing                    |                   T
 V1 hi column equals the double array                       |                   True |                   True |          0 | PASS
 V1 max |lo| <= half an ulp (4.8e-7)                        |              4.768e-07 |              4.800e-07 |         <= | PASS
 V1 max |exact - (hi+lo)| on 772719 ordinates (3e-23)       |              2.647e-23 |              3.000e-23 |         <= | PASS
-    (exact check: 6.2s)
+    (exact check: 8.9s)
 V1 fresh decode: cumulative integers identical             |                   True |                   True |          0 | PASS
-    (fresh decode with checks (i)-(iv): 3.5s)
+    (fresh decode with checks (i)-(iv): 4.6s)
 V1 LMFDB first ordinate                                    |          8436146000.02 |          8436146000.02 |       0.01 | PASS
 V1 LMFDB last ordinate                                     |          8436376999.73 |          8436376999.73 |       0.01 | PASS
 V1 2M size                                                 |                2001052 |                2001052 |          0 | PASS
@@ -28,9 +28,11 @@ V1 tight pairs 8.4e9                                       |                   2
 V1 tight pairs 2M                                          |                   6088 |                   6088 |          0 | PASS
 V1 tight pairs 100k                                        |                    261 |                    261 |          0 | PASS
 V1 pair index arrays consistent                            |                   True |                   True |          0 | PASS
-V1 |Z_dd - mpmath| on 20 mid-gaps (<= 8.5e-14)             |              8.404e-14 |              8.500e-14 |         <= | PASS
-V1 |Z_rs2 - mpmath| on 20 mid-gaps (<= 3.6e-8)             |              3.203e-08 |              3.600e-08 |         <= | PASS
+V1 |Z_dd - mpmath| on 20 mid-gaps (<= 8.45e-14)            |              8.404e-14 |              8.450e-14 |         <= | PASS
+V1 |Z_rs2 - mpmath| on 20 mid-gaps (<= 3.25e-8)            |              3.203e-08 |              3.250e-08 |         <= | PASS
+V1 median |Z_rs2 - mpmath| on 20 mid-gaps (1.0e-8)         |               9.61e-09 |                1.0e-08 |      5e-10 | PASS
 V1 Z_rs2 with double-precision 2pi: max error on 20 mid-gaps (<= 4e-6, > 1e-7) |               3.93e-06 |                3.9e-06 | [1e-7,4e-6] | PASS
+V1 ... median error on 20 mid-gaps (4e-7)                  |               4.04e-07 |                  4e-07 |      1e-07 | PASS
 V1 zeros3: base from the header                            |           267653395647 |           267653395647 |          0 | PASS
 V1 zeros3: 10^4 increasing offsets                         |                   True |                   True |          0 | PASS
 V1 zeros3: first offset                                    |           1.8475231278 |           1.8475231278 |      1e-12 | PASS
@@ -50,7 +52,7 @@ V1 smallest floor 8.4e9                                    |             1.3711e
 V1 shipped floor recomputed, pair 180923                   |             1.4112e-02 |              1.411e-02 |      1e-12 | PASS
 V1 shipped floor recomputed, pair 659470                   |             1.2947e-02 |              1.295e-02 |      1e-12 | PASS
 V1 shipped floor recomputed, pair 407169                   |             8.8051e-03 |              8.805e-03 |      1e-12 | PASS
-    [V1 done in 28.3s]
+    [V1 done in 39.5s]
 
 --- V2: the identity, Table 3.1; self-calibration, Observation 3.4 ---
 V2 identity max dev (double) 100k <= 1e-15                 |              4.441e-16 |              1.000e-15 |         <= | PASS
@@ -95,7 +97,7 @@ V2 Lehmer pairs (C > 5/4) have r > sqrt(20/21)             |                   T
 V2 tight pairs with C > 5/4 (2735 of 2736)                 |                   2735 |                   2735 |          0 | PASS
 V2 the exception is the pair with the smallest C_mid       |                   2320 |                   2320 |          0 | PASS
 V2 sqrt(20/21)                                             |                0.97590 |                 0.9759 |     0.0001 | PASS
-    [V2 done in 0.2s]
+    [V2 done in 0.3s]
 
 --- V3: floor law and curvature (Theorem A(b),(c), Table 3.2); endpoint identity ---
 V3 max |R_250| (3.0e-6)                                    |              6.564e-07 |              3.000e-06 |         <= | PASS
@@ -199,7 +201,7 @@ V3 endpoint identity exact, pair 637 (<= 1e-30)            |              7.631e
 V3 endpoint identity exact, pair 798 (<= 1e-30)            |              3.093e-41 |              1.000e-30 |         <= | PASS
 V3 max eta = S_end/(2 far) - 1 over the ensemble           |                 0.6163 |                   info |          - | PASS
 V3 eta >= 0 on every pair                                  |                   True |                   True |          0 | PASS
-    [V3 done in 131.2s]
+    [V3 done in 179.1s]
 
 --- V4: the sweep of the transposed detector (Section 3.6) ---
 V4 sweep rows                                              |                   2736 |                   2736 |          0 | PASS
@@ -220,7 +222,7 @@ V4 pairs violating (3.23)                                  |                    
 V4 max Ghat on 200 random pairs (<0)                       |                -3965.8 |                     <0 |          - | PASS
 V4 sweep far vs rows far, max rel dev                      |              3.380e-12 |              1.000e-10 |         <= | PASS
 V4 sweep r vs rows r, max rel dev                          |              5.011e-11 |              1.000e-10 |         <= | PASS
-    [V4 done in 1.3s]
+    [V4 done in 1.2s]
 
 --- V5: displacement law (Theorem B, Tables B.1-B.2) ---
 V5 corr(delta, prediction), 15 pairs (0.999998)            |              0.9999981 |               0.999998 |      2e-06 | PASS
@@ -312,7 +314,7 @@ V5 Lehmer R_3000 at X=1e4                                  |                +0.0
 V5 Lehmer R_3000 at X=1e7                                  |                +0.0080 |                +0.0080 |      1e-09 | PASS
 V5 Lehmer max |R_3000| over X (<= 0.009)                   |              8.537e-03 |              9.000e-03 |         <= | PASS
 V5 Lehmer log|P_1e4| recomputed                            |              -3.125001 |              -3.125001 |      1e-09 | PASS
-    [V5 done in 208.9s]
+    [V5 done in 286.1s]
 
 --- V6: harmonic truncation, Euler regression, smooth cutoffs (Sections 5.2-5.4) ---
 V6 Delta_0(1e2)                                            |           0.2381784258 |           0.2381784258 |      1e-09 | PASS
@@ -384,11 +386,11 @@ V6 max shift of b under smooth cutoffs                     |              2.129e
 V6 exp4 preserves the climb of b                           |         0.767 -> 0.943 |             increasing |          - | PASS
 V6 bump preserves the climb of b                           |         0.758 -> 0.937 |             increasing |          - | PASS
 V6 smooth sums recomputed on 5 pairs, max dev              |              0.000e+00 |              1.000e-09 |         <= | PASS
-    (smooth recomputation 4s)
+    (smooth recomputation 9s)
 V6 log|P_X| 8.4e9 recomputed on 2736 pairs, max dev        |              0.000e+00 |              1.000e-09 |         <= | PASS
 V6 log|P_X| 2M recomputed on 6088 pairs, max dev           |              0.000e+00 |              1.000e-09 |         <= | PASS
-    (prime sums: 630.4s)
-    [V6 done in 634.2s]
+    (prime sums: 778.6s)
+    [V6 done in 787.5s]
 
 --- V7: decomposition of the floor (Section 5.7, Table 5.6) ---
 V7 R Delta=100 X=1e2 med/sd/max (Table 5.6)                |   -0.0040/0.0172/0.057 |   -0.0040/0.0172/0.057 |      1e-09 | PASS
@@ -486,7 +488,7 @@ V7 sd(S_far) X=1e2 (0.32)                                  |                  0.
 V7 sd(S_far) X=1e7 (0.21)                                  |                  0.207 |                   0.21 |      0.005 | PASS
 V7 pair-term expansion |2Ci(y)-2(gamma+log y)| <= y^2/2    |             -2.614e-08 |              1.000e-12 |         <= | PASS
 V7 unexplained variance at X=1e7: sd(S_far)^2 (0.04)       |                 0.0426 |                  0.044 |      0.005 | PASS
-    [V7 done in 5.4s]
+    [V7 done in 9.6s]
 
 --- V8: mediation (Section 6, Tables 6.1-6.3) ---
 V8 K5 = corr(resid_g, log far) 100k (Table 6.1)            |                -0.3582 |                -0.3582 |      1e-12 | PASS
@@ -547,7 +549,7 @@ V8 tight subset s.e.(b) (0.011)                            |                 0.0
 V8 tight subset vs Table 5.1: a, in s.e. of the difference (1.6) |                  1.593 |                    1.6 |       0.05 | PASS
 V8 tight subset vs Table 5.1: b, in s.e. of the difference (1.3) |                  1.295 |                    1.3 |       0.05 | PASS
 V8 all-gap log|P_1e6| recomputed (20), max dev             |              3.158e-09 |              1.000e-08 |         <= | PASS
-    [V8 done in 50.7s]
+    [V8 done in 71.9s]
 
 --- V9: far-field law, shield, GUE diagnostics (Section 7) ---
 V9 mean far 100k (Table 7.1)                               |                 4.1739 |                 4.1739 |      1e-09 | PASS
@@ -607,7 +609,9 @@ V9 shield 1e12 prev-next in s.e. of the difference (1.5)   |                  1.
 V9 shield 1e21 prev-next in s.e. of the difference (2.3)   |                  2.283 |                    2.3 |       0.05 | PASS
 V9 two-sided shield on the large ensembles in [1.36, 1.39] (rounded) |   1.3881/1.3766/1.3571 |          [1.355,1.395] |          - | PASS
 V9 window 1e12 two-sided shield vs large-ensemble range, in s.e. |                   0.67 |                   1.00 |         <= | PASS
+V9 window 1e12 two-sided shield within 1.3 s.e. of each large-ensemble value |                   1.27 |                   1.30 |         <= | PASS
 V9 window 1e21 two-sided shield vs large-ensemble range, in s.e. |                   0.21 |                   1.00 |         <= | PASS
+V9 window 1e21 two-sided shield within 1.3 s.e. of each large-ensemble value |                   0.78 |                   1.30 |         <= | PASS
 V9 shield: primary below 2M by 0.02                        |                 0.0195 |                   0.02 |      0.005 | PASS
 V9 tight pairs in the 1e12 window                          |                     38 |                     38 |          0 | PASS
 V9 tight pairs in the 1e21 window                          |                     32 |                     32 |          0 | PASS
@@ -638,7 +642,7 @@ V9 GUE tail ratios LMFDB (text 0.887/0.981/0.957)          |      0.887/0.981/0.
 V9 lag-1 LMFDB (text -0.332)                               |                -0.3323 |                 -0.332 |     0.0005 | PASS
 V9 GUE window 1e12 counts / ratios / lag-1 (Table 7.3)     | [2, 6, 38] / 1.459/0.547/1.027 / -0.3315 | [2, 6, 38] / 1.459/0.547/1.027 / -0.3315 |      1e-09 | PASS
 V9 GUE window 1e21 counts / ratios / lag-1 (Table 7.3)     | [1, 10, 32] / 0.730/0.912/0.865 / -0.3169 | [1, 10, 32] / 0.730/0.912/0.865 / -0.3169 |      1e-09 | PASS
-    [V9 done in 0.3s]
+    [V9 done in 0.5s]
 
 --- V10: the GUE far-field constant (Theorem E, Observation 7.2) ---
 V10 int (1-S^2)/x^2 = 2pi^2/3                              |              6.5797365 |              6.5797363 |      1e-05 | PASS
@@ -691,7 +695,7 @@ V10 MC quick tier C_GUE (N=200, window 50, +2/w)           |                 2.5
 V10 MC quick tier lag-1 (-0.308)                           |                 -0.308 |                 -0.308 |       0.01 | PASS
 V10 MC quick tier tail ratio s0=0.10 vs exact              |                  1.015 |                  0.992 |       0.08 | PASS
 V10 MC quick tier tail ratio s0=0.15 vs exact              |                  1.004 |                  0.982 |       0.08 | PASS
-    [V10 done in 38.5s]
+    [V10 done in 52.7s]
 
 --- V11: the depth certificate on the data (Section 8.5, Theorem 9.3) ---
 V11 geometric part at H: n>0 / min / median / max          | 2734/0.857/4.462/8.855 |     2734/-/4.462/8.855 |      1e-09 | PASS
@@ -761,7 +765,7 @@ V11 u + mean log|P_X| at X=1e7 (6.9)                       |                  6.
 V11 median bound at X=1e7 inflated (4.5 half-gaps)         |                   4.55 |                    4.5 |       0.05 | PASS
 V11 Corollary 8.5: exp(-Delta/4) at X=1e7                  |                  1.837 |                  1.837 |      0.005 | PASS
 V11 log X / log T0 at X=1e7 (0.705)                        |                 0.7052 |                  0.705 |     0.0005 | PASS
-    [V11 done in 0.1s]
+    [V11 done in 0.2s]
 
 --- V12: tail bounds (Section 9) ---
 V12 prime powers <= 1e7                                    |                 665134 |                 665134 |          0 | PASS
@@ -830,7 +834,7 @@ V12 BR prediction                                          |             1.9731e
 V12 4 sigma at X=1e4 = 4.580                               |                 4.5800 |                  4.580 |      0.001 | PASS
 V12 IS estimate (seed 19, N=2000)                          |             1.8753e-06 |              1.880e-06 |       0.01 | PASS
 V12 IS std err                                             |             8.8898e-08 |              9.000e-08 |       0.05 | PASS
-    [V12 done in 26.4s]
+    [V12 done in 64.2s]
 
 --- V13: rank subsample, gap-only regression, variance ladder, errors in variables (Section 5.4) ---
 V13 subsample size                                         |                    300 |                    300 |          0 | PASS
@@ -951,9 +955,9 @@ V13 Table B.1 row 12 delta recomputed (30 digits)          |      -2.8032004760e
 V13 Table B.1 row 13 delta recomputed (30 digits)          |      -1.4715842195e-05 |      -1.4715842195e-05 |      1e-09 | PASS
 V13 Table B.1 row 14 delta recomputed (30 digits)          |      -7.4579336017e-06 |      -7.4579336017e-06 |      1e-09 | PASS
 V13 Table B.1 row 15 delta recomputed (30 digits)          |       6.3494795788e-05 |       6.3494795788e-05 |      1e-09 | PASS
-    [V13 done in 114.7s]
+    [V13 done in 152.5s]
 
-total 1240.2s
+total 1645.3s
 
 ====================================================================================================
-ALL PASS (910/910)   [total runtime 1240.2s]
+ALL PASS (914/914)   [total runtime 1645.3s]

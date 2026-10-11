@@ -80,20 +80,30 @@ def run(ctx):
     # instruments
     mp.mp.dps = 50
     rng = np.random.default_rng(2026)
-    sel = rng.choice(772000, 20 if ctx.full else 4, replace=False)
+    sel = rng.choice(772000, 20, replace=False)      # the twenty mid-gaps of Section 2.3; the default tier takes the first four
+    if not ctx.full:
+        sel = sel[:4]
     e_dd, e_rs = [], []
     for i in sel:
         tm = (mp.mpf(float(hl[i, 0])) + mp.mpf(float(hl[i, 1])) + mp.mpf(float(hl[i + 1, 0])) + mp.mpf(float(hl[i + 1, 1]))) / 2
         e_dd.append(abs(I.Z_dd(tm, mp) - float(mp.siegelz(tm))))
         tl = (zl[i] + zl[i + 1]) / 2
         e_rs.append(abs(I.Z_rs2(tl) - float(mp.siegelz(mp.mpf(np.format_float_positional(tl, precision=25))))))
-    below("V1 |Z_dd - mpmath| on %d mid-gaps (<= 8.5e-14)" % len(sel), max(e_dd), 8.5e-14)
-    below("V1 |Z_rs2 - mpmath| on %d mid-gaps (<= 3.6e-8)" % len(sel), max(e_rs), 3.6e-8)
+    below("V1 |Z_dd - mpmath| on %d mid-gaps (<= 8.45e-14)" % len(sel), max(e_dd), 8.45e-14)
+    below("V1 |Z_rs2 - mpmath| on %d mid-gaps (<= 3.25e-8)" % len(sel), max(e_rs), 3.25e-8)
+    if ctx.full:
+        close("V1 median |Z_rs2 - mpmath| on 20 mid-gaps (1.0e-8)", float(np.median(e_rs)), 1.0e-8, 5e-10, "%.2e", "%.1e")
+    else:
+        info("V1 median |Z_rs2 - mpmath| on %d mid-gaps (text: 1.0e-8 on 20)" % len(sel), float(np.median(e_rs)), "%.2e")
     e2pi = []
     for i in sel:
         td = float((zl[i] + zl[i + 1]) / 2)
         e2pi.append(abs(_Z_rs2_double_2pi(td) - float(mp.siegelz(mp.mpf(td)))))
     report("V1 Z_rs2 with double-precision 2pi: max error on %d mid-gaps (<= 4e-6, > 1e-7)" % len(sel), max(e2pi), 3.9e-6, "[1e-7,4e-6]", 1e-7 <= max(e2pi) <= 4e-6, "%.2e", "%.1e")
+    if ctx.full:
+        close("V1 ... median error on 20 mid-gaps (4e-7)", float(np.median(e2pi)), 4e-7, 1e-7, "%.2e", "%.0e")
+    else:
+        info("V1 ... median error on %d mid-gaps (text: 4e-7 on 20)" % len(sel), float(np.median(e2pi)), "%.2e")
     # the windows at 1e12 and 1e21 (Section 2.1)
     for name, base_t, first_t, dn_t, npairs in (("zeros3", 267653395647, 1.8475231278, 3.895, 38), ("zeros4", 144176897509546973000, 538.49806962, 7.095, 32)):
         b, off = D.load_window(name)
